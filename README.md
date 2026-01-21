@@ -1,73 +1,55 @@
-# React + TypeScript + Vite
+# KARU Marketplace
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> A premium handicraft marketplace connecting artisans with conscious buyers.
 
-Currently, two official plugins are available:
+## Current Status
+✅ **Phase 1-3 Complete** - Foundation, Layout, and Homepage
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Implementation Log
+- [x] React 19 + Vite + TypeScript setup
+- [x] Tailwind CSS v3 with custom earth-tone theme
+- [x] Google Fonts (Epilogue, Manrope, Noto Serif)
+- [x] Header with logo, search, cart/wishlist icons
+- [x] Footer with navigation columns and social links
+- [x] Hero section - "Handcrafted with Soul" banner
+- [x] Trending Now product grid with filter tabs
+- [x] Shop by Category cards (Home Decor, Jewelry, Textiles)
+- [x] Featured Artisan spotlight (Elena Rossi)
+- [x] Join Artisan Community CTA
+- [x] React Router configuration
 
-## React Compiler
+## Quick Start
+```bash
+npm install
+npm run dev
+```
+Open http://localhost:5173
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
+- **Frontend**: React 19, TypeScript, Vite
+- **Styling**: Tailwind CSS v3
+- **Icons**: Lucide React
+- **Routing**: React Router DOM
+- **Backend**: Convex (ready for integration)
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Project Structure
+```
+src/
+├── components/
+│   ├── layout/         # Header, Footer, Layout
+│   ├── home/           # Homepage sections
+│   └── product/        # ProductCard
+├── pages/              # HomePage
+└── router.tsx          # Route definitions
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Next Steps
+1. [ ] Product detail pages with gallery
+2. [ ] Artisan profile pages
+3. [ ] Convex backend integration
+4. [ ] User authentication
+5. [ ] Shopping cart functionality
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Known Issues
+- Images are using Unsplash URLs (production should use local assets)
+- Mock data in Trending section (for prototype)
