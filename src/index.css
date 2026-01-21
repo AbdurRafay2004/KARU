@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles */
+:root {
+  --karu-cream: #FDF8F3;
+  --karu-sand: #E8DDD3;
+  --karu-terracotta: #C75D3C;
+  --karu-clay: #8B5A3C;
+  --karu-charcoal: #2D2D2D;
+  --karu-stone: #6B6B6B;
+  --karu-warm: #F5EDE6;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Manrope', sans-serif;
+  background-color: var(--karu-cream);
+  color: var(--karu-charcoal);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Epilogue', sans-serif;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.font-accent {
+  font-family: 'Noto Serif', serif;
+}
+
+/* Custom utilities */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
