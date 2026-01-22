@@ -284,9 +284,9 @@ My workshop employs 8 local artisans, all women from my community. Together, we'
             },
         ];
 
-        for (const product of products) {
-            await ctx.db.insert("products", product);
-        }
+        await Promise.all(
+            products.map((product) => ctx.db.insert("products", product))
+        );
 
         return {
             message: "Database seeded successfully",
