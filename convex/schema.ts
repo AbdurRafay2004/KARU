@@ -18,9 +18,10 @@ export default defineSchema({
         materials: v.optional(v.array(v.string())),
         dimensions: v.optional(v.string()),
         weight: v.optional(v.string()),
-    }).index("by_artisan", ["artisanId"])
-        .index("by_category", ["category"])
-        .index("by_trending", ["isTrending"]),
+    }).index("by_artisan", ["artisanId", "price"])
+        .index("by_category", ["category", "price"])
+        .index("by_trending", ["isTrending"])
+        .index("by_price", ["price"]),
 
     // Artisans table
     artisans: defineTable({
