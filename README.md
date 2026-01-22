@@ -95,14 +95,108 @@ convex/
 └── admin.ts            # Admin dashboard queries and product CRUD
 ```
 
-## New Routes
-- `/checkout` - Shipping form and order placement
-- `/orders` - Order history with expandable details
-- `/admin` - Artisan dashboard for product/order management
+## Routing Architecture
+
+All routes are defined in [`src/router.tsx`](file:///y:/Antigravity%20workspace/Handicraft%20Marketplace/KARU/src/router.tsx) using React Router DOM v6.
+
+### Route Map
+
+```mermaid
+flowchart TB
+    subgraph Public["🌐 Public Routes"]
+        HOME["/  HomePage"]
+        PRODUCTS["/products  ProductListingPage"]
+        PRODUCT_DETAIL["/products/:id  ProductDetailPage"]
+        ARTISAN["/artisans/:id  ArtisanProfilePage"]
+    end
+    
+    subgraph Guest["👤 Guest Only"]
+        LOGIN["/login  LoginPage"]
+        SIGNUP["/signup  SignupPage"]
+    end
+    
+    subgraph Auth["🔐 Authenticated"]
+        CART["/cart  CartPage"]
+        CHECKOUT["/checkout  CheckoutPage"]
+        ORDERS["/orders  OrdersPage"]
+    end
+    
+    subgraph Artisan["🎨 Artisan Dashboard"]
+        ADMIN["/admin  AdminDashboardPage"]
+    end
+    
+    HOME --> PRODUCTS
+    PRODUCTS --> PRODUCT_DETAIL
+    PRODUCT_DETAIL --> ARTISAN
+    PRODUCT_DETAIL --> CART
+    CART --> CHECKOUT
+    CHECKOUT --> ORDERS
+    LOGIN --> HOME
+    SIGNUP --> HOME
+```
+
+### Route Table
+
+| Route | Component | Access Level | Description |
+|-------|-----------|--------------|-------------|
+| `/` | `HomePage` | Public | Hero, trending products, categories, featured artisan |
+| `/products` | `ProductListingPage` | Public | Filterable product grid with category/price/material filters |
+| `/products/:id` | `ProductDetailPage` | Public | Product gallery, details, add-to-cart, artisan info |
+| `/artisans/:id` | `ArtisanProfilePage` | Public | Artisan biography, story, studio, and product collection |
+| `/login` | `LoginPage` | Guest | Email/password authentication |
+| `/signup` | `SignupPage` | Guest | New user registration |
+| `/cart` | `CartPage` | Authenticated | Shopping cart with quantity controls |
+| `/checkout` | `CheckoutPage` | Authenticated | Shipping address form, order placement |
+| `/orders` | `OrdersPage` | Authenticated | Order history with expandable details and status |
+| `/admin` | `AdminDashboardPage` | Artisan | Product CRUD, order management, sales stats |
+
+### Navigation Flow
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         HEADER (Global)                         │
+│  Logo → Home | Search | Cart Badge | Orders Link | Auth Links   │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+        ┌─────────────────────┼─────────────────────┐
+        ▼                     ▼                     ▼
+   [Browse Flow]         [Auth Flow]          [Purchase Flow]
+        │                     │                     │
+   Home Page             Login/Signup           Cart Page
+        │                     │                     │
+   Product Listing       ──► Redirect ──►      Checkout
+        │                     to Home               │
+   Product Detail                              Order Confirm
+        │                                          │
+   Artisan Profile                             Orders Page
+```
+
+### Layout Wrapper
+
+All routes use the shared `<Layout>` component which provides:
+- **Header**: Logo, navigation, search, cart/wishlist icons, auth state
+- **Footer**: Navigation columns, newsletter, social links
+- **Consistent styling**: Earth-tone theme, responsive breakpoints
+
+### Dynamic Route Parameters
+
+| Parameter | Route | Usage |
+|-----------|-------|-------|
+| `:id` | `/products/:id` | Convex product `_id` (e.g., `jh7a...`) |
+| `:id` | `/artisans/:id` | Convex artisan `_id` |
+
+### Future Routes (Planned)
+
+| Route | Purpose |
+|-------|---------|
+| `/wishlist` | Saved/favorited products |
+| `/artisan/register` | Artisan onboarding wizard |
+| `/search` | Dedicated search results page |
+| `/order/:id` | Individual order details |
 
 ## Next Steps
-3. [ ] Product image upload (Convex file storage)
-4. [ ] Artisan registration flow
+3. [ ] Product image upload (image url)
+4. [ ] Artisan registration flow  
 
 ## Known Issues
 - Images are using Unsplash URLs (production should use local assets)
