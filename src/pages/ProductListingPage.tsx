@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ProductCard } from '../components/product/ProductCard';
-import { FilterSidebar } from '../components/product/FilterSidebar';
+import { FilterSidebar } from '../components/product/FilterSidebar.tsx';
 import { SlidersHorizontal, Grid3x3, LayoutGrid } from 'lucide-react';
 
 // Mock product data - will be replaced with Convex backend
