@@ -27,15 +27,22 @@ export const list = query({
         }
 
         // Enrich with artisan data
-        const enrichedProducts = await Promise.all(
-            products.map(async (product) => {
-                const artisan = await ctx.db.get(product.artisanId);
-                return {
-                    ...product,
-                    artisan: artisan ? { name: artisan.name, slug: artisan.slug } : null,
-                };
-            })
-        );
+        const artisanIds = [...new Set(products.map((p) => p.artisanId))];
+        const artisans = await Promise.all(artisanIds.map((id) => ctx.db.get(id)));
+        const artisanMap = new Map();
+        for (const artisan of artisans) {
+            if (artisan) {
+                artisanMap.set(artisan._id, artisan);
+            }
+        }
+
+        const enrichedProducts = products.map((product) => {
+            const artisan = artisanMap.get(product.artisanId);
+            return {
+                ...product,
+                artisan: artisan ? { name: artisan.name, slug: artisan.slug } : null,
+            };
+        });
 
         return enrichedProducts;
     },
@@ -79,15 +86,22 @@ export const trending = query({
             .collect();
 
         // Enrich with artisan data
-        const enrichedProducts = await Promise.all(
-            products.map(async (product) => {
-                const artisan = await ctx.db.get(product.artisanId);
-                return {
-                    ...product,
-                    artisan: artisan ? { name: artisan.name, slug: artisan.slug } : null,
-                };
-            })
-        );
+        const artisanIds = [...new Set(products.map((p) => p.artisanId))];
+        const artisans = await Promise.all(artisanIds.map((id) => ctx.db.get(id)));
+        const artisanMap = new Map();
+        for (const artisan of artisans) {
+            if (artisan) {
+                artisanMap.set(artisan._id, artisan);
+            }
+        }
+
+        const enrichedProducts = products.map((product) => {
+            const artisan = artisanMap.get(product.artisanId);
+            return {
+                ...product,
+                artisan: artisan ? { name: artisan.name, slug: artisan.slug } : null,
+            };
+        });
 
         return enrichedProducts;
     },
