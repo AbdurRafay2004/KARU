@@ -11,6 +11,7 @@
 import type * as artisans from "../artisans.js";
 import type * as auth from "../auth.js";
 import type * as categories from "../categories.js";
+import type * as http from "../http.js";
 import type * as products from "../products.js";
 import type * as seed from "../seed.js";
 import type * as users from "../users.js";
@@ -25,6 +26,7 @@ declare const fullApi: ApiFromModules<{
   artisans: typeof artisans;
   auth: typeof auth;
   categories: typeof categories;
+  http: typeof http;
   products: typeof products;
   seed: typeof seed;
   users: typeof users;

@@ -31,6 +31,8 @@
 - [x] FeaturedArtisan, CategorySection
 - [x] **User Authentication & Cart**
 - [x] Convex Auth with Password provider
+- [x] HTTP actions enabled for auth
+- [x] JWT environment variables configured
 - [x] Login and Signup pages
 - [x] Cart page with quantity controls
 - [x] Auth-aware Header with cart count
