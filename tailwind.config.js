@@ -26,6 +26,23 @@ export default {
                 'karu': '12px',
                 'karu-lg': '20px',
             },
+            boxShadow: {
+                'soft-lg': '0 10px 40px -10px rgba(0, 0, 0, 0.05)',
+            },
+            keyframes: {
+                float: {
+                    '0%, 100%': { transform: 'translateY(0)' },
+                    '50%': { transform: 'translateY(-10px)' },
+                },
+                'gradient-x': {
+                    '0%, 100%': { 'background-size': '200% 200%', 'background-position': 'left center' },
+                    '50%': { 'background-size': '200% 200%', 'background-position': 'right center' },
+                }
+            },
+            animation: {
+                float: 'float 6s ease-in-out infinite',
+                'gradient-x': 'gradient-x 3s ease infinite',
+            },
         },
     },
     plugins: [],
