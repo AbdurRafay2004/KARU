@@ -127,11 +127,33 @@ Main landing page composing all sections
 
 ---
 
+### Phase 4: Product System [CURRENT]
+
+#### [NEW] [src/pages/ProductDetailPage.tsx](file:///y:/Antigravity%20workspace/Handicraft%20Marketplace/KARU/src/pages/ProductDetailPage.tsx)
+- Main page for displaying a single product's details.
+- Uses `useParams` to get the product ID (initially using mock data).
+- Composes `ProductGallery` and `ProductInfo`.
+
+#### [NEW] [src/components/product/ProductGallery.tsx](file:///y:/Antigravity%20workspace/Handicraft%20Marketplace/KARU/src/components/product/ProductGallery.tsx)
+- Displays main product image.
+- Navigation thumbnails for multi-image support.
+- Smooth transition between images.
+
+#### [NEW] [src/components/product/ProductInfo.tsx](file:///y:/Antigravity%20workspace/Handicraft%20Marketplace/KARU/src/components/product/ProductInfo.tsx)
+- Product name, price, and category.
+- Detailed description.
+- Artisan summary with link to profile.
+- "Add to Cart" and "Add to Wishlist" buttons.
+- Shipping and return policies accordion/list.
+
+---
+
 ### Routing
 
 #### [NEW] [src/router.tsx](file:///y:/Antigravity%20workspace/Handicraft%20Marketplace/KARU/src/router.tsx)
 React Router configuration:
 - `/` - HomePage
+- `/products/:id` - ProductDetailPage
 - `/products` - ProductsPage (future)
 - `/artisans/:id` - ArtisanPage (future)
 
@@ -169,7 +191,7 @@ Verify no TypeScript or build errors.
 ## Implementation Priority
 
 > [!IMPORTANT]
-> This plan focuses on **Phase 1-3**: Foundation, Layout, and Homepage. Product/Artisan pages and authentication will be subsequent phases.
+> This plan focuses on **Phase 4**: Product Detail System. Homepage and Layout were completed in Phases 1-3.
 
 **Estimated time:** 2-3 hours for initial homepage implementation
 

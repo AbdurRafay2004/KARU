@@ -1,9 +1,9 @@
 # KARU Marketplace
 
-> A premium handicraft marketplace connecting artisans with conscious buyers.
+> A premium handicraft marketplace connecting artisans with conscious buyers. Available all over bangladesh, not globally.
 
 ## Current Status
-✅ **Phase 1-3 Complete** - Foundation, Layout, and Homepage
+✅ **Phase 4 Complete** - Product Detail System implemented
 
 ### Implementation Log
 - [x] React 19 + Vite + TypeScript setup
@@ -17,6 +17,8 @@
 - [x] Featured Artisan spotlight (Elena Rossi)
 - [x] Join Artisan Community CTA
 - [x] React Router configuration
+- [x] Product Detail Page with responsive gallery
+- [x] Product Information component with artisan links and policies
 
 ## Quick Start
 ```bash
@@ -44,8 +46,8 @@ src/
 ```
 
 ## Next Steps
-1. [ ] Product detail pages with gallery
-2. [ ] Artisan profile pages
+1. [ ] Artisan profile pages with portfolio
+2. [ ] Product listing/browse page with filters
 3. [ ] Convex backend integration
 4. [ ] User authentication
 5. [ ] Shopping cart functionality
