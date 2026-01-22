@@ -54,101 +54,6 @@
   - [x] Auth-aware Header with cart count
   - [x] Add to Cart functionality
 
-## Architecture Analysis (Deep Dive)
-*Analysis Date: Jan 2026*
-
-A critical review of the current codebase reveals three major flaws preventing the platform from being "industry-grade".
-
-### 1. Critical Security Flaws (RBAC)
-- **Issue**: The `convex/admin.ts` mutations (`addProduct`, `updateProduct`) and `orders.ts` (`updateOrderStatus`) have **no authorization checks**.
-- **Impact**: Any logged-in user (buyer) can manually trigger these mutations to delete products or change order statuses if they know the API.
-- **Root Cause**: The backend relies on the UI to hide buttons, but does not verify `user.id` against `artisan.ownerId` on the server.
-
-### 2. Disconnected Identity System
-- **Issue**: `Users` (Auth) and `Artisans` (Profiles) are in separate, unlinked tables.
-- **Impact**: The system has no way to know if a logged-in user is an artisan. There is no concept of "logging in as a seller".
-- **Current Workaround**: The `/admin` page loads *all* artisans and lets anyone select one to manage.
-
-### 3. Missing UX & Navigation
-- **Issue**: The current Header is static. It does not reflect the rich, logged-in state expected of a marketplace (e.g., Etsy).
-- **Missing**:
-    -   No User Dropdown (Profile, Orders, Settings).
-    -   No "Shop Manager" link for artisans.
-    -   No "Become a Seller" onboarding flow.
-
----
-
-## Phase 7: Industry-Grade Architecture Plan
-*Goal: Implement a secure, Etsy-inspired unified user flow.*
-
-### A. Unified Identity Schema
-We will link the User and Artisan worlds.
-1.  **Users Table**: Add `role` ("user", "admin") and `artisanId` (optional link to their shop).
-2.  **Artisans Table**: Add `userId` (owner).
-3.  **Permissions**: All mutations will strictly verify: `item.artisanId === currentUser.artisanId`.
-
-### B. Etsy-Inspired Navigation Flow
-The UX will be restructured to handle dual roles (Buyer + Seller) seamlessly.
-
-**1. The "Etsy" Header**
--   **Logged Out**: Sign In / Join.
--   **Logged In (Buyer)**:
-    -   User Avatar Dropdown:
-        -   *Profile*: "View your profile" (Public).
-        -   *Orders*: "Purchases and reviews".
-        -   *Action*: "Sell on Karu" (Links to Onboarding).
-        -   *Settings*: "Account settings", "Sign out".
--   **Logged In (Artisan)**:
-    -   **Shop Manager Icon**: Dedicated link to `/dashboard` (next to Cart).
-    -   User Dropdown: Same as buyer, but "Sell on Karu" becomes "Shop Manager".
-
-### C. Self-Serve Artisan Onboarding (Option A)
-Users can self-promote to Artisans.
-1.  **Route `/sell`**: Landing page ("Join the community of makers").
-2.  **Route `/onboarding`**: Protected wizard.
-    -   Step 1: Shop Name & Details.
-    -   Step 2: Story & Process.
-    -   Step 3: Location & Categories.
-3.  **Completion**: Creates `Artisan` record, updates `User` record, redirects to `/dashboard`.
-
-### D. Secure Dashboard (`/dashboard`)
-Replaces the insecure `/admin`.
--   **Context-Aware**: Does not accept `?artisanId=`. Instead, queries `getCurrentUser()` -> finds `artisanId` -> loads *that* data.
--   **Features**:
-    -   **Overview**: Sales, visits, pending orders.
-    -   **Products**: Add/Edit *my* products only.
-    -   **Orders**: Manage orders containing *my* items.
-
----
-
-## Next Steps (Implementation Checklist)
-
-### Step 1: Schema Migration
-- [ ] Update `schema.ts`: Add `role` to users (via auth adapter config or separate table strategy) and `userId` to artisans.
-- [ ] Create `migrate_users` script to assign roles to existing users.
-
-### Step 2: Authentication & Header
-- [ ] Update `Header.tsx` to support the "Etsy-style" dropdown.
-- [ ] Create `UserMenu` component (Avatar + Dropdown).
-- [ ] Implement `useCurrentUser` hook that fetches the extended user profile (including `artisanId`).
-
-### Step 3: Artisan Onboarding
-- [ ] Create `/sell` landing page.
-- [ ] Create `/onboarding` wizard (using React Hook Form).
-- [ ] Implement `registerArtisan` mutation in Convex.
-
-### Step 4: Secure Dashboard
-- [ ] Create `/dashboard` layout (Sidebar + Content).
-- [ ] Refactor `convex/admin.ts` to `convex/dashboard.ts`:
-    -   Remove `artisanId` arguments.
-    -   Derive `artisanId` from `auth.getUserId()`.
-    -   Add strict security checks.
-- [ ] Migrate Product & Order management UI to `/dashboard`.
-
-### Step 5: Platform Admin (Optional)
-- [ ] Move current `/admin` to `/platform-admin`.
-- [ ] Restrict access to `user.role === 'admin'`.
-
 ## Quick Start
 ```bash
 npm install
@@ -189,3 +94,16 @@ convex/
 ├── orders.ts           # Order mutations and queries
 └── admin.ts            # Admin dashboard queries and product CRUD
 ```
+
+## New Routes
+- `/checkout` - Shipping form and order placement
+- `/orders` - Order history with expandable details
+- `/admin` - Artisan dashboard for product/order management
+
+## Next Steps
+3. [ ] Product image upload (Convex file storage)
+4. [ ] Artisan registration flow
+
+## Known Issues
+- Images are using Unsplash URLs (production should use local assets)
+- Admin dashboard requires authentication to view products/orders
