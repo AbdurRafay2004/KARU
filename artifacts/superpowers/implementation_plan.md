@@ -146,6 +146,16 @@ Main landing page composing all sections
 - "Add to Cart" and "Add to Wishlist" buttons.
 - Shipping and return policies accordion/list.
 
+#### [NEW] [src/pages/ProductsPage.tsx](file:///y:/Antigravity%20workspace/Handicraft%20Marketplace/KARU/src/pages/ProductsPage.tsx)
+- Main catalog page with sidebar layout.
+- State management for active filters.
+- Responsive design (sidebar becomes drawer on mobile).
+
+#### [NEW] [src/components/product/ProductSidebar.tsx](file:///y:/Antigravity%20workspace/Handicraft%20Marketplace/KARU/src/components/product/ProductSidebar.tsx)
+- Filter sections: Category, Price Range, Artisan, Materials.
+- Checkbox and slider inputs.
+- "Clear All" functionality.
+
 ---
 
 ### Routing
@@ -154,7 +164,7 @@ Main landing page composing all sections
 React Router configuration:
 - `/` - HomePage
 - `/products/:id` - ProductDetailPage
-- `/products` - ProductsPage (future)
+- `/products` - ProductsPage
 - `/artisans/:id` - ArtisanPage (future)
 
 ---
@@ -191,7 +201,7 @@ Verify no TypeScript or build errors.
 ## Implementation Priority
 
 > [!IMPORTANT]
-> This plan focuses on **Phase 4**: Product Detail System. Homepage and Layout were completed in Phases 1-3.
+> This plan focuses on **Phase 4**: Product Listing Page. Previous phases completed.
 
 **Estimated time:** 2-3 hours for initial homepage implementation
 
