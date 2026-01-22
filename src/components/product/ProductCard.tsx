@@ -6,11 +6,15 @@ interface ProductCardProps {
     name: string;
     price: number;
     artisan: string;
+    artisanSlug?: string;
     image: string;
     isTrending?: boolean;
 }
 
-export function ProductCard({ id, name, price, artisan, image, isTrending }: ProductCardProps) {
+export function ProductCard({ id, name, price, artisan, artisanSlug, image, isTrending }: ProductCardProps) {
+    // Use provided slug, or derive from artisan name as fallback
+    const slug = artisanSlug || artisan.toLowerCase().replace(/\s+/g, '-');
+
     return (
         <article className="group relative">
             {/* Image Container */}
@@ -47,7 +51,7 @@ export function ProductCard({ id, name, price, artisan, image, isTrending }: Pro
                             </Link>
                         </h3>
                         <p className="text-sm text-karu-stone">
-                            by <Link to={`/artisans/${artisan.toLowerCase().replace(' ', '-')}`} className="hover:text-karu-terracotta transition-colors">{artisan}</Link>
+                            by <Link to={`/artisans/${slug}`} className="hover:text-karu-terracotta transition-colors">{artisan}</Link>
                         </p>
                     </div>
                     <span className="font-heading font-semibold text-karu-terracotta">${price}</span>

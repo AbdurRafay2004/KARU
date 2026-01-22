@@ -1,8 +1,10 @@
 # KARU Marketplace
 
-> A premium handicraft marketplace connecting artisans with conscious buyers. Available all over bangladesh, not globally.
+> A premium handicraft marketplace connecting artisans with conscious buyers. Available all over Bangladesh, not globally.
 
 ## Current Status
+✅ **Phase B Complete** - Homepage Integration
+✅ **Phase A Complete** - Page-to-Page Linking Fixed
 ✅ **Phase 6 Complete** - Convex Backend Integration
 ✅ **Phase 5 Complete** - Artisan Profile System implemented
 ✅ **Phase 4 Complete** - Product Listing with Filters implemented
@@ -37,6 +39,9 @@
 - [x] Seed data (4 artisans, 12 products, 5 categories)
 - [x] ConvexProvider setup
 - [x] Product listing with Convex queries
+- [x] **All Pages Connected to Convex**
+- [x] ProductDetailPage, ArtisanProfilePage, TrendingSection
+- [x] FeaturedArtisan, CategorySection
 
 ## Quick Start
 ```bash
@@ -71,13 +76,12 @@ convex/
 └── seed.ts             # Database seeding
 ```
 
-## Next Steps
-1. [ ] Update remaining pages to use Convex (ProductDetail, ArtisanProfile, HomePage)
-2. [ ] User authentication (Convex Auth)
-3. [ ] Shopping cart functionality
-4. [ ] Checkout flow
-5. [ ] Admin dashboard for artisans
+## Next Steps (Phase C)
+1. [ ] User authentication (Convex Auth)
+2. [ ] Shopping cart functionality
+3. [ ] Checkout flow
+4. [ ] Admin dashboard for artisans
 
 ## Known Issues
 - Images are using Unsplash URLs (production should use local assets)
-- ProductDetailPage and ArtisanProfilePage still using mock data (migration in progress)
+- Some seed data images don't match product titles (needs seed.ts update)

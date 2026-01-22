@@ -1,42 +1,15 @@
 import { useState } from 'react';
+import { useQuery } from 'convex/react';
+import { api } from '../../../convex/_generated/api';
 import { ProductCard } from '../product/ProductCard';
-
-const SAMPLE_PRODUCTS = [
-    {
-        id: '1',
-        name: 'Woven Jute Rug',
-        price: 120,
-        artisan: 'Studio Craft',
-        image: 'https://images.unsplash.com/photo-1600166898405-da9535204843?w=600&q=80',
-    },
-    {
-        id: '2',
-        name: 'Speckled Mug',
-        price: 35,
-        artisan: 'Clay Soul',
-        image: 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=600&q=80',
-    },
-    {
-        id: '3',
-        name: 'Pearl Drop Earrings',
-        price: 85,
-        artisan: 'Luna Jewelry',
-        image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600&q=80',
-    },
-    {
-        id: '4',
-        name: 'Walnut Bowl',
-        price: 65,
-        artisan: 'Woodworks',
-        image: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=600&q=80',
-        isTrending: true,
-    },
-];
 
 type FilterTab = 'all' | 'new' | 'bestsellers';
 
 export function TrendingSection() {
     const [activeTab, setActiveTab] = useState<FilterTab>('all');
+
+    // Fetch trending products from Convex
+    const trendingProducts = useQuery(api.products.trending);
 
     const tabs: { id: FilterTab; label: string }[] = [
         { id: 'all', label: 'All' },
@@ -63,8 +36,8 @@ export function TrendingSection() {
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`px-4 py-2 text-sm font-medium rounded-full transition-all ${activeTab === tab.id
-                                        ? 'bg-white text-karu-charcoal shadow-sm'
-                                        : 'text-karu-stone hover:text-karu-charcoal'
+                                    ? 'bg-white text-karu-charcoal shadow-sm'
+                                    : 'text-karu-stone hover:text-karu-charcoal'
                                     }`}
                             >
                                 {tab.label}
@@ -74,11 +47,36 @@ export function TrendingSection() {
                 </div>
 
                 {/* Product Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                    {SAMPLE_PRODUCTS.map((product) => (
-                        <ProductCard key={product.id} {...product} />
-                    ))}
-                </div>
+                {trendingProducts === undefined ? (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                        {[1, 2, 3, 4].map((i) => (
+                            <div key={i} className="animate-pulse">
+                                <div className="aspect-square bg-karu-sand rounded-karu mb-3"></div>
+                                <div className="h-4 bg-karu-sand rounded w-3/4 mb-2"></div>
+                                <div className="h-3 bg-karu-sand rounded w-1/2"></div>
+                            </div>
+                        ))}
+                    </div>
+                ) : trendingProducts.length > 0 ? (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                        {trendingProducts.map((product) => (
+                            <ProductCard
+                                key={product._id}
+                                id={product._id}
+                                name={product.name}
+                                price={product.price}
+                                artisan={product.artisan?.name || 'Unknown'}
+                                artisanSlug={product.artisan?.slug}
+                                image={product.images[0]}
+                                isTrending={product.isTrending}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-center py-12">
+                        <p className="text-karu-stone">No trending products at the moment.</p>
+                    </div>
+                )}
 
                 {/* Load More */}
                 <div className="mt-10 text-center">

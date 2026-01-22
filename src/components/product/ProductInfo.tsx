@@ -6,11 +6,11 @@ interface ProductInfoProps {
     price: number;
     category: string;
     description: string;
-    artisan: {
+    artisan?: {
         name: string;
         id: string;
         description: string;
-    };
+    } | null;
 }
 
 export function ProductInfo({ name, price, category, description, artisan }: ProductInfoProps) {
@@ -51,18 +51,20 @@ export function ProductInfo({ name, price, category, description, artisan }: Pro
             </div>
 
             {/* Artisan Summary */}
-            <div className="p-6 bg-karu-warm rounded-karu-lg border border-karu-sand/30">
-                <h3 className="font-heading font-semibold text-karu-charcoal mb-2">Meet the Artisan</h3>
-                <p className="text-sm text-karu-stone mb-4 line-clamp-2">
-                    {artisan.description}
-                </p>
-                <Link
-                    to={`/artisans/${artisan.id}`}
-                    className="text-sm font-semibold text-karu-terracotta hover:underline"
-                >
-                    View {artisan.name}'s Profile
-                </Link>
-            </div>
+            {artisan && (
+                <div className="p-6 bg-karu-warm rounded-karu-lg border border-karu-sand/30">
+                    <h3 className="font-heading font-semibold text-karu-charcoal mb-2">Meet the Artisan</h3>
+                    <p className="text-sm text-karu-stone mb-4 line-clamp-2">
+                        {artisan.description}
+                    </p>
+                    <Link
+                        to={`/artisans/${artisan.id}`}
+                        className="text-sm font-semibold text-karu-terracotta hover:underline"
+                    >
+                        View {artisan.name}'s Profile
+                    </Link>
+                </div>
+            )}
 
             {/* Policies */}
             <div className="grid grid-cols-1 gap-4 pt-4 border-t border-karu-sand">

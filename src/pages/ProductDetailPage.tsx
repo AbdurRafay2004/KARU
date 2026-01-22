@@ -1,32 +1,53 @@
 import { useParams, Link } from 'react-router-dom';
+import { useQuery } from 'convex/react';
+import { api } from '../../convex/_generated/api';
+import type { Id } from '../../convex/_generated/dataModel';
 import { ChevronLeft } from 'lucide-react';
 import { ProductGallery } from '../components/product/ProductGallery';
 import { ProductInfo } from '../components/product/ProductInfo';
 
-// Mock data for initial implementation
-const MOCK_PRODUCT = {
-    id: '1',
-    name: 'Woven Jute Rug',
-    price: 120,
-    category: 'Home Decor',
-    description: 'Our hand-woven jute rug is more than just a floor covering. Each piece is crafted using sustainable, high-quality jute fibers sourced from local farmers. The subtle patterns and earthy tones reflect the natural beauty of the material, bringing a touch of warmth and craftsmanship to any room. This rug is designed to be durable, eco-friendly, and uniquely yours.',
-    images: [
-        'https://images.unsplash.com/photo-1600166898405-da9535204843?w=1200&q=80',
-        'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=1200&q=80',
-        'https://images.unsplash.com/photo-1516455590571-18256e5bb9ff?w=1200&q=80',
-    ],
-    artisan: {
-        id: 'studio-craft',
-        name: 'Studio Craft',
-        description: 'Based in the serene mountains, Studio Craft focuses on ancient weaving techniques passed down through generations. They believe in the soul of handmade goods and ethical production.',
-    }
-};
-
 export function ProductDetailPage() {
-    const { id: _id } = useParams();
+    const { id } = useParams<{ id: string }>();
 
-    // In a real app, you would fetch data here
-    const product = MOCK_PRODUCT;
+    // Fetch product from Convex
+    const product = useQuery(
+        api.products.get,
+        id ? { id: id as Id<"products"> } : "skip"
+    );
+
+    // Loading state
+    if (product === undefined) {
+        return (
+            <div className="min-h-screen bg-karu-cream flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-karu-terracotta mx-auto mb-4"></div>
+                    <p className="text-karu-stone">Loading product...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Not found state
+    if (product === null) {
+        return (
+            <div className="min-h-screen bg-karu-cream flex items-center justify-center">
+                <div className="text-center">
+                    <h1 className="font-heading text-3xl font-bold text-karu-charcoal mb-4">
+                        Product Not Found
+                    </h1>
+                    <p className="text-karu-stone mb-6">
+                        The product you're looking for doesn't exist or has been removed.
+                    </p>
+                    <Link
+                        to="/products"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-karu-terracotta text-white rounded-karu hover:bg-karu-clay transition-colors"
+                    >
+                        Browse All Products
+                    </Link>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="pt-8 pb-16 md:pb-24">
@@ -34,11 +55,11 @@ export function ProductDetailPage() {
                 {/* Breadcrumb / Back button */}
                 <div className="mb-8">
                     <Link
-                        to="/"
+                        to="/products"
                         className="inline-flex items-center gap-2 text-sm text-karu-stone hover:text-karu-terracotta transition-colors group"
                     >
                         <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-                        Back to Home
+                        Back to Products
                     </Link>
                 </div>
 
@@ -53,7 +74,11 @@ export function ProductDetailPage() {
                             price={product.price}
                             category={product.category}
                             description={product.description}
-                            artisan={product.artisan}
+                            artisan={product.artisan ? {
+                                id: product.artisan.slug,
+                                name: product.artisan.name,
+                                description: product.artisan.bio ?? '',
+                            } : null}
                         />
                     </div>
                 </div>

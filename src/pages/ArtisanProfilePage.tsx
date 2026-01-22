@@ -1,73 +1,47 @@
 import { MapPin, Mail, Globe, Instagram, Facebook, Twitter } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
+import { useQuery } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 import { ProductCard } from '../components/product/ProductCard';
-
-// Mock artisan data - will be replaced with Convex backend
-const MOCK_ARTISANS: Record<string, {
-    id: string;
-    name: string;
-    location: string;
-    specialty: string;
-    bio: string;
-    story: string;
-    avatar: string;
-    coverImage: string;
-    processPhotos: string[];
-    email: string;
-    website?: string;
-    social: {
-        instagram?: string;
-        facebook?: string;
-        twitter?: string;
-    };
-    products: Array<{
-        id: string;
-        name: string;
-        price: number;
-        artisan: string;
-        image: string;
-    }>;
-}> = {
-    'elena-rossi': {
-        id: 'elena-rossi',
-        name: 'Elena Rossi',
-        location: 'Dhaka, Bangladesh',
-        specialty: 'Handwoven Textiles & Baskets',
-        bio: 'Master weaver with 15+ years of experience creating sustainable, handcrafted textiles using traditional techniques passed down through generations.',
-        story: `I discovered my passion for weaving at the age of 12, learning from my grandmother in our small village. What started as a childhood fascination became my life's work.\n\nToday, I work with natural fibers sourced from local farmers, creating pieces that tell stories of our heritage. Each thread is carefully selected, each pattern thoughtfully designed to honor both tradition and contemporary aesthetics.\n\nMy workshop employs 8 local artisans, all women from my community. Together, we're preserving ancient techniques while creating sustainable livelihoods. Every piece that leaves our studio carries the warmth of our hands and the pride of our craft.`,
-        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400',
-        coverImage: 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=1200',
-        processPhotos: [
-            'https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=600',
-            'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=600',
-            'https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=600',
-            'https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?w=600',
-        ],
-        email: 'elena@karumarketplace.com',
-        website: 'https://elenarossi-weaves.com',
-        social: {
-            instagram: '@elenarossi_weaves',
-            facebook: 'ElenaRossiTextiles',
-        },
-        products: [
-            { id: '1', name: 'Handwoven Basket', price: 45, artisan: 'Elena Rossi', image: 'https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=500' },
-            { id: '4', name: 'Embroidered Cushion', price: 35, artisan: 'Elena Rossi', image: 'https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?w=500' },
-            { id: '10', name: 'Woven Table Runner', price: 52, artisan: 'Elena Rossi', image: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=500' },
-        ],
-    },
-};
 
 export function ArtisanProfilePage() {
     const { id } = useParams<{ id: string }>();
-    const artisan = id ? MOCK_ARTISANS[id] : null;
 
-    if (!artisan) {
+    // Fetch artisan by slug from Convex
+    const artisan = useQuery(
+        api.artisans.getBySlug,
+        id ? { slug: id } : "skip"
+    );
+
+    // Fetch artisan's products
+    const products = useQuery(
+        api.products.byArtisan,
+        artisan?._id ? { artisanId: artisan._id } : "skip"
+    );
+
+    // Loading state
+    if (artisan === undefined) {
+        return (
+            <div className="min-h-screen bg-karu-cream flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-karu-terracotta mx-auto mb-4"></div>
+                    <p className="text-karu-stone">Loading artisan profile...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Not found state
+    if (artisan === null) {
         return (
             <div className="min-h-screen bg-karu-cream flex items-center justify-center">
                 <div className="text-center">
                     <h1 className="font-heading text-3xl font-bold text-karu-charcoal mb-4">
                         Artisan Not Found
                     </h1>
+                    <p className="text-karu-stone mb-6">
+                        The artisan you're looking for doesn't exist.
+                    </p>
                     <Link to="/products" className="text-karu-terracotta hover:underline">
                         Browse all products
                     </Link>
@@ -140,7 +114,7 @@ export function ArtisanProfilePage() {
                                     </a>
                                 )}
                                 <div className="flex gap-2 pt-2">
-                                    {artisan.social.instagram && (
+                                    {artisan.social?.instagram && (
                                         <a
                                             href={`https://instagram.com/${artisan.social.instagram.replace('@', '')}`}
                                             target="_blank"
@@ -151,7 +125,7 @@ export function ArtisanProfilePage() {
                                             <Instagram className="w-5 h-5 text-karu-charcoal" />
                                         </a>
                                     )}
-                                    {artisan.social.facebook && (
+                                    {artisan.social?.facebook && (
                                         <a
                                             href={`https://facebook.com/${artisan.social.facebook}`}
                                             target="_blank"
@@ -162,7 +136,7 @@ export function ArtisanProfilePage() {
                                             <Facebook className="w-5 h-5 text-karu-charcoal" />
                                         </a>
                                     )}
-                                    {artisan.social.twitter && (
+                                    {artisan.social?.twitter && (
                                         <a
                                             href={`https://twitter.com/${artisan.social.twitter}`}
                                             target="_blank"
@@ -225,14 +199,35 @@ export function ArtisanProfilePage() {
                             Products by {artisan.name}
                         </h2>
                         <p className="text-karu-stone">
-                            {artisan.products.length} handcrafted pieces available
+                            {products?.length || 0} handcrafted pieces available
                         </p>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {artisan.products.map((product) => (
-                            <ProductCard key={product.id} {...product} />
-                        ))}
-                    </div>
+
+                    {products === undefined ? (
+                        <div className="text-center py-8">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-karu-terracotta mx-auto"></div>
+                        </div>
+                    ) : products.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {products.map((product) => (
+                                <ProductCard
+                                    key={product._id}
+                                    id={product._id}
+                                    name={product.name}
+                                    price={product.price}
+                                    artisan={artisan.name}
+                                    artisanSlug={artisan.slug}
+                                    image={product.images[0]}
+                                    isTrending={product.isTrending}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-karu-stone text-center py-8">
+                            No products available yet.
+                        </p>
+                    )}
+
                     <div className="text-center mt-8">
                         <Link
                             to="/products"

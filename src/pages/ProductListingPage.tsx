@@ -153,6 +153,7 @@ export function ProductListingPage() {
                                         name={product.name}
                                         price={product.price}
                                         artisan={product.artisan?.name || 'Unknown'}
+                                        artisanSlug={product.artisan?.slug}
                                         image={product.images[0]}
                                         isTrending={product.isTrending}
                                     />
