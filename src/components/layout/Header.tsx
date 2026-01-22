@@ -1,4 +1,4 @@
-import { Search, ShoppingBag, Heart, User, LogOut } from 'lucide-react';
+import { Search, ShoppingBag, Heart, User, LogOut, Package } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useQuery } from 'convex/react';
 import { useAuthActions } from '@convex-dev/auth/react';
@@ -50,10 +50,17 @@ export function Header() {
 
                         {/* Authenticated: Show user menu */}
                         <Authenticated>
-                            <div className="hidden sm:flex items-center gap-2">
+                            <div className="hidden sm:flex items-center gap-3">
                                 <span className="text-sm text-karu-stone">
                                     Hi, {currentUser?.name?.split(' ')[0] || 'there'}
                                 </span>
+                                <Link
+                                    to="/orders"
+                                    className="p-2 text-karu-stone hover:text-karu-terracotta transition-colors"
+                                    title="My Orders"
+                                >
+                                    <Package className="w-4 h-4" />
+                                </Link>
                                 <button
                                     onClick={() => signOut()}
                                     className="p-2 text-karu-stone hover:text-karu-terracotta transition-colors"

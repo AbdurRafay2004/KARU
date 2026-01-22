@@ -151,9 +151,12 @@ export function CartPage() {
                                 <span>${(total + (total >= 150 ? 0 : 10)).toFixed(2)}</span>
                             </div>
                         </div>
-                        <button className="w-full py-3 bg-karu-terracotta text-white rounded-karu font-semibold hover:bg-karu-clay transition-colors">
+                        <Link
+                            to="/checkout"
+                            className="block w-full py-3 bg-karu-terracotta text-white rounded-karu font-semibold hover:bg-karu-clay transition-colors text-center"
+                        >
                             Proceed to Checkout
-                        </button>
+                        </Link>
                         <p className="text-xs text-karu-stone text-center mt-4">
                             Free shipping on orders over $150
                         </p>

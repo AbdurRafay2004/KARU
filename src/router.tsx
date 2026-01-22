@@ -7,6 +7,9 @@ import { ArtisanProfilePage } from './pages/ArtisanProfilePage';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 import { CartPage } from './pages/CartPage';
+import { CheckoutPage } from './pages/CheckoutPage';
+import { OrdersPage } from './pages/OrdersPage';
+import { AdminDashboardPage } from './pages/AdminDashboardPage';
 
 export const router = createBrowserRouter([
     {
@@ -36,5 +39,17 @@ export const router = createBrowserRouter([
     {
         path: '/cart',
         element: <Layout><CartPage /></Layout>,
+    },
+    {
+        path: '/checkout',
+        element: <Layout><CheckoutPage /></Layout>,
+    },
+    {
+        path: '/orders',
+        element: <Layout><OrdersPage /></Layout>,
+    },
+    {
+        path: '/admin',
+        element: <Layout><AdminDashboardPage /></Layout>,
     },
 ]);
