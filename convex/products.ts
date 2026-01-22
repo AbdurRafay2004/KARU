@@ -10,21 +10,61 @@ export const list = query({
         artisanId: v.optional(v.id("artisans")),
     },
     handler: async (ctx, args) => {
-        let products = await ctx.db.query("products").collect();
+        let productsQuery;
 
-        // Apply filters
-        if (args.category) {
-            products = products.filter((p) => p.category === args.category);
-        }
-        if (args.minPrice !== undefined) {
-            products = products.filter((p) => p.price >= args.minPrice!);
-        }
-        if (args.maxPrice !== undefined) {
-            products = products.filter((p) => p.price <= args.maxPrice!);
-        }
         if (args.artisanId) {
-            products = products.filter((p) => p.artisanId === args.artisanId);
+            productsQuery = ctx.db
+                .query("products")
+                .withIndex("by_artisan", (q) => {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    let res: any = q.eq("artisanId", args.artisanId!);
+                    if (args.minPrice !== undefined) {
+                        res = res.gte("price", args.minPrice);
+                    }
+                    if (args.maxPrice !== undefined) {
+                        res = res.lte("price", args.maxPrice);
+                    }
+                    return res;
+                });
+
+            if (args.category) {
+                productsQuery = productsQuery.filter((q) =>
+                    q.eq(q.field("category"), args.category)
+                );
+            }
+        } else if (args.category) {
+            productsQuery = ctx.db
+                .query("products")
+                .withIndex("by_category", (q) => {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    let res: any = q.eq("category", args.category!);
+                    if (args.minPrice !== undefined) {
+                        res = res.gte("price", args.minPrice);
+                    }
+                    if (args.maxPrice !== undefined) {
+                        res = res.lte("price", args.maxPrice);
+                    }
+                    return res;
+                });
+        } else if (args.minPrice !== undefined || args.maxPrice !== undefined) {
+            productsQuery = ctx.db
+                .query("products")
+                .withIndex("by_price", (q) => {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    let res: any = q;
+                    if (args.minPrice !== undefined) {
+                        res = res.gte("price", args.minPrice);
+                    }
+                    if (args.maxPrice !== undefined) {
+                        res = res.lte("price", args.maxPrice);
+                    }
+                    return res;
+                });
+        } else {
+            productsQuery = ctx.db.query("products");
         }
+
+        const products = await productsQuery.collect();
 
         // Enrich with artisan data
         const enrichedProducts = await Promise.all(
