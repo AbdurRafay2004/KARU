@@ -5,26 +5,60 @@ import { v } from "convex/values";
 export const list = query({
     args: {
         category: v.optional(v.string()),
+        categories: v.optional(v.array(v.string())),
         minPrice: v.optional(v.number()),
         maxPrice: v.optional(v.number()),
         artisanId: v.optional(v.id("artisans")),
+        artisanNames: v.optional(v.array(v.string())),
     },
     handler: async (ctx, args) => {
-        let products = await ctx.db.query("products").collect();
+        // Resolve artisan names to IDs if provided
+        let targetArtisanIds = null;
+        if (args.artisanNames && args.artisanNames.length > 0) {
+            const artisans = await ctx.db.query("artisans")
+                .filter((q) =>
+                    q.or(...args.artisanNames!.map(name => q.eq(q.field("name"), name)))
+                )
+                .collect();
+            targetArtisanIds = artisans.map(a => a._id);
+        }
 
-        // Apply filters
-        if (args.category) {
-            products = products.filter((p) => p.category === args.category);
-        }
-        if (args.minPrice !== undefined) {
-            products = products.filter((p) => p.price >= args.minPrice!);
-        }
-        if (args.maxPrice !== undefined) {
-            products = products.filter((p) => p.price <= args.maxPrice!);
-        }
-        if (args.artisanId) {
-            products = products.filter((p) => p.artisanId === args.artisanId);
-        }
+        const products = await ctx.db.query("products")
+            .filter((q) => {
+                const filters = [];
+
+                // Category filter
+                if (args.categories && args.categories.length > 0) {
+                    filters.push(
+                        q.or(...args.categories.map(c => q.eq(q.field("category"), c)))
+                    );
+                } else if (args.category) {
+                    filters.push(q.eq(q.field("category"), args.category));
+                }
+
+                // Price filter
+                if (args.minPrice !== undefined) {
+                    filters.push(q.gte(q.field("price"), args.minPrice));
+                }
+                if (args.maxPrice !== undefined) {
+                    filters.push(q.lte(q.field("price"), args.maxPrice));
+                }
+
+                // Artisan filter
+                if (targetArtisanIds !== null) {
+                    if (targetArtisanIds.length === 0) {
+                        return false;
+                    }
+                    filters.push(
+                        q.or(...targetArtisanIds.map(id => q.eq(q.field("artisanId"), id)))
+                    );
+                } else if (args.artisanId) {
+                    filters.push(q.eq(q.field("artisanId"), args.artisanId));
+                }
+
+                return filters.length > 0 ? q.and(...filters) : q.eq(true, true);
+            })
+            .collect();
 
         // Enrich with artisan data
         const enrichedProducts = await Promise.all(

@@ -20,18 +20,16 @@ export function ProductListingPage() {
     const products = useQuery(api.products.list, {
         minPrice: priceRange[0],
         maxPrice: priceRange[1],
+        categories: selectedCategories.length > 0 ? selectedCategories : undefined,
+        artisanNames: selectedArtisans.length > 0 ? selectedArtisans : undefined,
     });
 
     // Filter and sort products
     const filteredProducts = useMemo(() => {
         if (!products) return [];
 
-        let filtered = products.filter(product => {
-            const categoryMatch = selectedCategories.length === 0 || selectedCategories.includes(product.category);
-            const artisanMatch = selectedArtisans.length === 0 ||
-                (product.artisan && selectedArtisans.includes(product.artisan.name));
-            return categoryMatch && artisanMatch;
-        });
+        // Create a copy for sorting
+        const filtered = [...products];
 
         // Sort products
         filtered.sort((a, b) => {
@@ -50,7 +48,7 @@ export function ProductListingPage() {
         });
 
         return filtered;
-    }, [products, selectedCategories, selectedArtisans, sortBy]);
+    }, [products, sortBy]);
 
     // Loading state
     if (products === undefined) {
