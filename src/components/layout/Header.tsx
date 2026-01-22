@@ -1,7 +1,15 @@
-import { Search, ShoppingBag, Heart, User } from 'lucide-react';
+import { Search, ShoppingBag, Heart, User, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useQuery } from 'convex/react';
+import { useAuthActions } from '@convex-dev/auth/react';
+import { api } from '../../../convex/_generated/api';
+import { Authenticated, Unauthenticated } from 'convex/react';
 
 export function Header() {
+    const { signOut } = useAuthActions();
+    const currentUser = useQuery(api.users.getCurrentUser);
+    const cartCount = useQuery(api.users.getCartCount);
+
     return (
         <header className="bg-white border-b border-karu-sand sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -30,30 +38,50 @@ export function Header() {
 
                     {/* Right Actions */}
                     <div className="flex items-center gap-4">
-                        <Link
-                            to="/signin"
-                            className="hidden sm:inline-flex text-sm font-medium text-karu-charcoal hover:text-karu-terracotta transition-colors"
-                        >
-                            Sign in
-                        </Link>
+                        {/* Unauthenticated: Show Sign in */}
+                        <Unauthenticated>
+                            <Link
+                                to="/login"
+                                className="hidden sm:inline-flex text-sm font-medium text-karu-charcoal hover:text-karu-terracotta transition-colors"
+                            >
+                                Sign in
+                            </Link>
+                        </Unauthenticated>
+
+                        {/* Authenticated: Show user menu */}
+                        <Authenticated>
+                            <div className="hidden sm:flex items-center gap-2">
+                                <span className="text-sm text-karu-stone">
+                                    Hi, {currentUser?.name?.split(' ')[0] || 'there'}
+                                </span>
+                                <button
+                                    onClick={() => signOut()}
+                                    className="p-2 text-karu-stone hover:text-karu-terracotta transition-colors"
+                                    title="Sign out"
+                                >
+                                    <LogOut className="w-4 h-4" />
+                                </button>
+                            </div>
+                        </Authenticated>
 
                         <button className="p-2 text-karu-charcoal hover:text-karu-terracotta transition-colors relative">
                             <Heart className="w-5 h-5" />
-                            <span className="absolute -top-1 -right-1 w-4 h-4 bg-karu-terracotta text-white text-xs rounded-full flex items-center justify-center">
-                                2
-                            </span>
                         </button>
 
-                        <button className="p-2 text-karu-charcoal hover:text-karu-terracotta transition-colors relative">
+                        <Link to="/cart" className="p-2 text-karu-charcoal hover:text-karu-terracotta transition-colors relative">
                             <ShoppingBag className="w-5 h-5" />
-                            <span className="absolute -top-1 -right-1 w-4 h-4 bg-karu-terracotta text-white text-xs rounded-full flex items-center justify-center">
-                                3
-                            </span>
-                        </button>
+                            {(cartCount ?? 0) > 0 && (
+                                <span className="absolute -top-1 -right-1 w-4 h-4 bg-karu-terracotta text-white text-xs rounded-full flex items-center justify-center">
+                                    {cartCount}
+                                </span>
+                            )}
+                        </Link>
 
-                        <button className="md:hidden p-2 text-karu-charcoal">
-                            <User className="w-5 h-5" />
-                        </button>
+                        <Unauthenticated>
+                            <Link to="/login" className="md:hidden p-2 text-karu-charcoal">
+                                <User className="w-5 h-5" />
+                            </Link>
+                        </Unauthenticated>
                     </div>
                 </div>
             </div>

@@ -1,7 +1,13 @@
-import { Heart, ShoppingBag, ShieldCheck, Truck, RotateCcw } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Heart, ShoppingBag, ShieldCheck, Truck, RotateCcw, Check } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useMutation } from 'convex/react';
+import { Authenticated, Unauthenticated } from 'convex/react';
+import { api } from '../../../convex/_generated/api';
+import type { Id } from '../../../convex/_generated/dataModel';
 
 interface ProductInfoProps {
+    productId?: string;
     name: string;
     price: number;
     category: string;
@@ -13,7 +19,26 @@ interface ProductInfoProps {
     } | null;
 }
 
-export function ProductInfo({ name, price, category, description, artisan }: ProductInfoProps) {
+export function ProductInfo({ productId, name, price, category, description, artisan }: ProductInfoProps) {
+    const navigate = useNavigate();
+    const addToCart = useMutation(api.users.addToCart);
+    const [adding, setAdding] = useState(false);
+    const [added, setAdded] = useState(false);
+
+    const handleAddToCart = async () => {
+        if (!productId) return;
+        setAdding(true);
+        try {
+            await addToCart({ productId: productId as Id<"products">, quantity: 1 });
+            setAdded(true);
+            setTimeout(() => setAdded(false), 2000);
+        } catch (err) {
+            console.error('Failed to add to cart:', err);
+        } finally {
+            setAdding(false);
+        }
+    };
+
     return (
         <div className="flex flex-col gap-8">
             {/* Product Heading */}
@@ -41,10 +66,39 @@ export function ProductInfo({ name, price, category, description, artisan }: Pro
 
             {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-4">
-                <button className="flex-1 flex items-center justify-center gap-2 bg-karu-charcoal text-white px-8 py-4 rounded-full font-semibold hover:bg-karu-charcoal/90 transition-all">
-                    <ShoppingBag className="w-5 h-5" />
-                    Add to Cart
-                </button>
+                <Authenticated>
+                    <button
+                        onClick={handleAddToCart}
+                        disabled={adding || added}
+                        className={`flex-1 flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold transition-all ${added
+                                ? 'bg-green-600 text-white'
+                                : 'bg-karu-charcoal text-white hover:bg-karu-charcoal/90'
+                            } disabled:cursor-not-allowed`}
+                    >
+                        {added ? (
+                            <>
+                                <Check className="w-5 h-5" />
+                                Added to Cart
+                            </>
+                        ) : adding ? (
+                            'Adding...'
+                        ) : (
+                            <>
+                                <ShoppingBag className="w-5 h-5" />
+                                Add to Cart
+                            </>
+                        )}
+                    </button>
+                </Authenticated>
+                <Unauthenticated>
+                    <button
+                        onClick={() => navigate('/login')}
+                        className="flex-1 flex items-center justify-center gap-2 bg-karu-charcoal text-white px-8 py-4 rounded-full font-semibold hover:bg-karu-charcoal/90 transition-all"
+                    >
+                        <ShoppingBag className="w-5 h-5" />
+                        Sign in to Add to Cart
+                    </button>
+                </Unauthenticated>
                 <button className="flex items-center justify-center p-4 border border-karu-sand rounded-full hover:bg-karu-sand/20 transition-all text-karu-charcoal">
                     <Heart className="w-6 h-6" />
                 </button>

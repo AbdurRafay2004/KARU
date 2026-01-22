@@ -70,6 +70,7 @@ export function ProductDetailPage() {
                     </div>
                     <div className="lg:col-span-5">
                         <ProductInfo
+                            productId={product._id}
                             name={product.name}
                             price={product.price}
                             category={product.category}

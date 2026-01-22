@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@auth/core": "^0.37.4",
+    "@convex-dev/auth": "^0.0.90",
     "autoprefixer": "^10.4.23",
     "convex": "^1.31.5",
     "framer-motion": "^12.28.1",

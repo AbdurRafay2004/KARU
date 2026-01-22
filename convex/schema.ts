@@ -1,7 +1,10 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { authTables } from "@convex-dev/auth/server";
 
 export default defineSchema({
+    ...authTables,
+
     // Products table
     products: defineTable({
         name: v.string(),
@@ -49,15 +52,7 @@ export default defineSchema({
         image: v.string(),
     }).index("by_slug", ["slug"]),
 
-    // Users table
-    users: defineTable({
-        email: v.string(),
-        name: v.string(),
-        role: v.union(v.literal("buyer"), v.literal("seller")),
-        avatar: v.optional(v.string()),
-    }).index("by_email", ["email"]),
-
-    // Cart table
+    // Cart table - now linked to auth users
     cart: defineTable({
         userId: v.id("users"),
         items: v.array(
@@ -68,7 +63,7 @@ export default defineSchema({
         ),
     }).index("by_user", ["userId"]),
 
-    // Orders table (for future use)
+    // Orders table
     orders: defineTable({
         userId: v.id("users"),
         items: v.array(
