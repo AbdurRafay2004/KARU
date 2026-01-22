@@ -44,9 +44,9 @@ export const seedDatabase = mutation({
             },
         ];
 
-        for (const category of categories) {
-            await ctx.db.insert("categories", category);
-        }
+        await Promise.all(
+            categories.map((category) => ctx.db.insert("categories", category))
+        );
 
         // Seed Artisans
         const elenaId = await ctx.db.insert("artisans", {
