@@ -3,6 +3,7 @@
 > A premium handicraft marketplace connecting artisans with conscious buyers. Available all over bangladesh, not globally.
 
 ## Current Status
+✅ **Phase 6 Complete** - Convex Backend Integration
 ✅ **Phase 5 Complete** - Artisan Profile System implemented
 ✅ **Phase 4 Complete** - Product Listing with Filters implemented
 
@@ -30,11 +31,18 @@
 - [x] Process photos gallery
 - [x] Artisan product listings
 - [x] Social links and contact info
+- [x] **Convex Backend Integration**
+- [x] Database schema (products, artisans, categories, users, cart, orders)
+- [x] Real-time queries and mutations
+- [x] Seed data (4 artisans, 12 products, 5 categories)
+- [x] ConvexProvider setup
+- [x] Product listing with Convex queries
 
 ## Quick Start
 ```bash
 npm install
-npm run dev
+npm run dev          # Start Vite dev server
+npx convex dev      # Start Convex backend (in separate terminal)
 ```
 Open http://localhost:5173
 
@@ -43,7 +51,8 @@ Open http://localhost:5173
 - **Styling**: Tailwind CSS v3
 - **Icons**: Lucide React
 - **Routing**: React Router DOM
-- **Backend**: Convex (ready for integration)
+- **Backend**: Convex (real-time database)
+- **State Management**: Convex React hooks
 
 ## Project Structure
 ```
@@ -54,10 +63,16 @@ src/
 │   └── product/        # ProductCard, FilterSidebar, Gallery, Info
 ├── pages/              # HomePage, ProductListingPage, ProductDetailPage, ArtisanProfilePage
 └── router.tsx          # Route definitions
+convex/
+├── schema.ts           # Database schema
+├── products.ts         # Product queries
+├── artisans.ts         # Artisan queries
+├── categories.ts       # Category queries
+└── seed.ts             # Database seeding
 ```
 
 ## Next Steps
-1. [ ] Convex backend integration
+1. [ ] Update remaining pages to use Convex (ProductDetail, ArtisanProfile, HomePage)
 2. [ ] User authentication (Convex Auth)
 3. [ ] Shopping cart functionality
 4. [ ] Checkout flow
@@ -65,4 +80,4 @@ src/
 
 ## Known Issues
 - Images are using Unsplash URLs (production should use local assets)
-- Mock data in all sections (for prototype)
+- ProductDetailPage and ArtisanProfilePage still using mock data (migration in progress)

@@ -1,23 +1,9 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useQuery } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 import { ProductCard } from '../components/product/ProductCard';
 import { FilterSidebar } from '../components/product/FilterSidebar.tsx';
 import { SlidersHorizontal, Grid3x3, LayoutGrid } from 'lucide-react';
-
-// Mock product data - will be replaced with Convex backend
-const MOCK_PRODUCTS = [
-    { id: '1', name: 'Handwoven Basket', price: 45, artisan: 'Elena Rossi', image: 'https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=500', category: 'Home Decor', dateAdded: '2024-01-15' },
-    { id: '2', name: 'Ceramic Bowl Set', price: 89, artisan: 'Maria Santos', image: 'https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=500', category: 'Home Decor', dateAdded: '2024-01-20' },
-    { id: '3', name: 'Silver Pendant Necklace', price: 125, artisan: 'Aisha Khan', image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500', category: 'Jewelry', dateAdded: '2024-01-18' },
-    { id: '4', name: 'Embroidered Cushion', price: 35, artisan: 'Elena Rossi', image: 'https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?w=500', category: 'Textiles', dateAdded: '2024-01-22' },
-    { id: '5', name: 'Wooden Wall Art', price: 150, artisan: 'James Chen', image: 'https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=500', category: 'Home Decor', dateAdded: '2024-01-10' },
-    { id: '6', name: 'Brass Earrings', price: 55, artisan: 'Aisha Khan', image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500', category: 'Jewelry', dateAdded: '2024-01-25' },
-    { id: '7', name: 'Hand-dyed Scarf', price: 68, artisan: 'Maria Santos', image: 'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=500', category: 'Textiles', dateAdded: '2024-01-12' },
-    { id: '8', name: 'Terracotta Vase', price: 42, artisan: 'James Chen', image: 'https://images.unsplash.com/photo-1578500494198-246f612d3b3d?w=500', category: 'Home Decor', dateAdded: '2024-01-28' },
-    { id: '9', name: 'Beaded Bracelet', price: 38, artisan: 'Aisha Khan', image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=500', category: 'Jewelry', dateAdded: '2024-01-14' },
-    { id: '10', name: 'Woven Table Runner', price: 52, artisan: 'Elena Rossi', image: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=500', category: 'Textiles', dateAdded: '2024-01-30' },
-    { id: '11', name: 'Pottery Planter', price: 48, artisan: 'Maria Santos', image: 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=500', category: 'Home Decor', dateAdded: '2024-01-16' },
-    { id: '12', name: 'Gold Ring', price: 195, artisan: 'Aisha Khan', image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=500', category: 'Jewelry', dateAdded: '2024-01-21' },
-];
 
 export type SortOption = 'newest' | 'price-low' | 'price-high' | 'popular';
 export type GridSize = 3 | 4;
@@ -30,26 +16,53 @@ export function ProductListingPage() {
     const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
     const [selectedArtisans, setSelectedArtisans] = useState<string[]>([]);
 
-    // Filter and sort products
-    const filteredProducts = MOCK_PRODUCTS.filter(product => {
-        const categoryMatch = selectedCategories.length === 0 || selectedCategories.includes(product.category);
-        const priceMatch = product.price >= priceRange[0] && product.price <= priceRange[1];
-        const artisanMatch = selectedArtisans.length === 0 || selectedArtisans.includes(product.artisan);
-        return categoryMatch && priceMatch && artisanMatch;
-    }).sort((a, b) => {
-        switch (sortBy) {
-            case 'price-low':
-                return a.price - b.price;
-            case 'price-high':
-                return b.price - a.price;
-            case 'newest':
-                return new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime();
-            case 'popular':
-                return 0; // Would use actual popularity metric
-            default:
-                return 0;
-        }
+    // Fetch products from Convex
+    const products = useQuery(api.products.list, {
+        minPrice: priceRange[0],
+        maxPrice: priceRange[1],
     });
+
+    // Filter and sort products
+    const filteredProducts = useMemo(() => {
+        if (!products) return [];
+
+        let filtered = products.filter(product => {
+            const categoryMatch = selectedCategories.length === 0 || selectedCategories.includes(product.category);
+            const artisanMatch = selectedArtisans.length === 0 ||
+                (product.artisan && selectedArtisans.includes(product.artisan.name));
+            return categoryMatch && artisanMatch;
+        });
+
+        // Sort products
+        filtered.sort((a, b) => {
+            switch (sortBy) {
+                case 'price-low':
+                    return a.price - b.price;
+                case 'price-high':
+                    return b.price - a.price;
+                case 'newest':
+                    return new Date(b._creationTime).getTime() - new Date(a._creationTime).getTime();
+                case 'popular':
+                    return 0; // Would use actual popularity metric
+                default:
+                    return 0;
+            }
+        });
+
+        return filtered;
+    }, [products, selectedCategories, selectedArtisans, sortBy]);
+
+    // Loading state
+    if (products === undefined) {
+        return (
+            <div className="min-h-screen bg-karu-cream flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-karu-terracotta mx-auto mb-4"></div>
+                    <p className="text-karu-stone">Loading products...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-karu-cream">
@@ -134,7 +147,15 @@ export function ProductListingPage() {
                         {filteredProducts.length > 0 ? (
                             <div className={`grid gap-6 ${gridSize === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
                                 {filteredProducts.map((product) => (
-                                    <ProductCard key={product.id} {...product} />
+                                    <ProductCard
+                                        key={product._id}
+                                        id={product._id}
+                                        name={product.name}
+                                        price={product.price}
+                                        artisan={product.artisan?.name || 'Unknown'}
+                                        image={product.images[0]}
+                                        isTrending={product.isTrending}
+                                    />
                                 ))}
                             </div>
                         ) : (
