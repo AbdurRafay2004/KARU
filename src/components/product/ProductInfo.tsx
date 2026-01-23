@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Heart, ShoppingBag, ShieldCheck, Truck, RotateCcw, Check } from 'lucide-react';
+import { ShoppingBag, ShieldCheck, Truck, RotateCcw, Check } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from 'convex/react';
 import { Authenticated, Unauthenticated } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 import type { Id } from '../../../convex/_generated/dataModel';
+import { WishlistButton } from './WishlistButton';
 
 interface ProductInfoProps {
     productId?: string;
@@ -71,8 +72,8 @@ export function ProductInfo({ productId, name, price, category, description, art
                         onClick={handleAddToCart}
                         disabled={adding || added}
                         className={`flex-1 flex items-center justify-center gap-2 px-8 py-4 rounded-full font-semibold transition-all ${added
-                                ? 'bg-green-600 text-white'
-                                : 'bg-karu-charcoal text-white hover:bg-karu-charcoal/90'
+                            ? 'bg-green-600 text-white'
+                            : 'bg-karu-charcoal text-white hover:bg-karu-charcoal/90'
                             } disabled:cursor-not-allowed`}
                     >
                         {added ? (
@@ -99,9 +100,15 @@ export function ProductInfo({ productId, name, price, category, description, art
                         Sign in to Add to Cart
                     </button>
                 </Unauthenticated>
-                <button className="flex items-center justify-center p-4 border border-karu-sand rounded-full hover:bg-karu-sand/20 transition-all text-karu-charcoal">
-                    <Heart className="w-6 h-6" />
-                </button>
+                {productId && (
+                    <div className="flex items-center justify-center p-2 border border-karu-sand rounded-full hover:bg-karu-sand/20 transition-all">
+                        <WishlistButton
+                            productId={productId as Id<"products">}
+                            size="lg"
+                            showText
+                        />
+                    </div>
+                )}
             </div>
 
             {/* Artisan Summary */}

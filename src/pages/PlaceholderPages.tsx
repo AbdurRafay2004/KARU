@@ -4,9 +4,11 @@ import { Construction } from 'lucide-react';
 interface PlaceholderPageProps {
     title: string;
     description?: string;
+    linkTo?: string;
+    buttonText?: string;
 }
 
-function PlaceholderPage({ title, description }: PlaceholderPageProps) {
+function PlaceholderPage({ title, description, linkTo = "/", buttonText = "Back to Home" }: PlaceholderPageProps) {
     return (
         <div className="min-h-screen bg-karu-cream flex items-center justify-center px-4">
             <div className="max-w-md text-center">
@@ -20,10 +22,10 @@ function PlaceholderPage({ title, description }: PlaceholderPageProps) {
                     {description || 'This page is coming soon. We\'re working hard to bring you this feature.'}
                 </p>
                 <Link
-                    to="/"
+                    to={linkTo}
                     className="inline-flex px-6 py-3 bg-karu-terracotta text-white rounded-karu font-medium hover:bg-karu-clay transition-colors"
                 >
-                    Back to Home
+                    {buttonText}
                 </Link>
             </div>
         </div>
@@ -32,7 +34,14 @@ function PlaceholderPage({ title, description }: PlaceholderPageProps) {
 
 // Export individual placeholder pages
 export function MarketplacePage() {
-    return <PlaceholderPage title="Marketplace" description="Our full marketplace experience is coming soon!" />;
+    return (
+        <PlaceholderPage
+            title="Marketplace"
+            description="Our full marketplace experience is ready for you to explore."
+            linkTo="/products"
+            buttonText="Explore Marketplace"
+        />
+    );
 }
 
 export function StoryPage() {

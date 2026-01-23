@@ -33,7 +33,7 @@ export const HeroSection = () => {
                         </p>
 
                         <div className="flex flex-wrap gap-4">
-                            <Link to="/marketplace">
+                            <Link to="/products">
                                 <Button variant="hero">
                                     Explore Marketplace
                                     <ArrowRight className="h-5 w-5" />

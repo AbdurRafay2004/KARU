@@ -75,6 +75,12 @@ export default defineSchema({
         ),
     }).index("by_user", ["userId"]),
 
+    // Wishlist table
+    wishlist: defineTable({
+        userId: v.id("users"),
+        productIds: v.array(v.id("products")),
+    }).index("by_user", ["userId"]),
+
     // Orders table
     orders: defineTable({
         userId: v.id("users"),

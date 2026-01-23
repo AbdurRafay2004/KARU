@@ -13,6 +13,7 @@ import { OrdersPage } from './pages/OrdersPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { SellPage } from './pages/SellPage';
 import { OnboardingPage } from './pages/OnboardingPage';
+import { WishlistPage } from './pages/WishlistPage';
 import {
     MarketplacePage,
     StoryPage,
@@ -83,6 +84,10 @@ export const router = createBrowserRouter([
     {
         path: '/onboarding',
         element: <Layout><OnboardingPage /></Layout>,
+    },
+    {
+        path: '/wishlist',
+        element: <Layout><WishlistPage /></Layout>,
     },
     // Footer placeholder pages
     {

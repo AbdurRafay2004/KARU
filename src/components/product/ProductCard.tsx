@@ -1,5 +1,6 @@
-import { Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { WishlistButton } from './WishlistButton';
+import type { Id } from '../../../convex/_generated/dataModel';
 
 interface ProductCardProps {
     id: string;
@@ -33,12 +34,12 @@ export function ProductCard({ id, name, price, artisan, artisanSlug, image, isTr
                 )}
 
                 {/* Wishlist Button */}
-                <button
-                    className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
-                    aria-label="Add to wishlist"
-                >
-                    <Heart className="w-4 h-4 text-karu-charcoal" />
-                </button>
+                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white">
+                    <WishlistButton
+                        productId={id as Id<"products">}
+                        size="sm"
+                    />
+                </div>
             </Link>
 
             {/* Product Info */}

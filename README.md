@@ -3,6 +3,8 @@
 > A premium handicraft marketplace connecting artisans with conscious buyers. Available all over Bangladesh, not globally.
 
 ## Current Status
+✅ **Wishlist Feature** - Heart icon on product cards, Save button, dedicated /wishlist page
+✅ **Marketplace Polished** - All links, filters, and hero CTAs functional
 ✅ **Phase 7 Complete** - Industry-Grade Architecture (Schema Migration & Authorization)
 ✅ **Phase E Complete** - Checkout, Orders & Admin Dashboard
 ✅ **Phase D Complete** - Vercel Deployment & Environment Fix
@@ -56,6 +58,19 @@
 - [x] **All Pages Connected to Convex**
   - [x] ProductDetailPage, ArtisanProfilePage, TrendingSection
   - [x] FeaturedArtisan, CategorySection
+- [x] **Wishlist/Favorites Feature**
+  - [x] Added `wishlist` table to Convex schema
+  - [x] Created `wishlist.ts` with CRUD operations (add, remove, toggle, check)
+  - [x] Created reusable `WishlistButton` component
+  - [x] Added heart icon on product cards and detail pages
+  - [x] Header wishlist icon links to `/wishlist` with count badge
+  - [x] Dedicated `/wishlist` page with empty/unauthenticated states
+- [x] **Marketplace Connectivity & Fixes**
+  - [x] Connected Hero section "Explore Marketplace" button to `/products`
+  - [x] Added "Marketplace" link to Footer "Shop" column
+  - [x] Fixed Trending Now filter tabs (New Arrivals, Best Sellers)
+  - [x] Fixed Artisan Profile links from listing page
+  - [x] Created placeholder pages for all footer links
 - [x] **User Authentication & Cart**
   - [x] Convex Auth with Password provider
   - [x] HTTP actions enabled for auth
@@ -236,9 +251,9 @@ Users can become artisans through a guided flow:
 
 ## Next Steps (Potential Enhancements)
 
-- [ ] Add image upload for artisan avatars and product photos
-- [ ] Implement search functionality with full-text search
-- [ ] Add wishlist/favorites feature
+- [ ] Add image upload for artisan avatars and product photos (image url)
+- [ ] Implement smart search functionality 
+- [x] Add wishlist/favorites feature
 - [ ] fake Payment gateway integration showcase (bKash, Nagad)
 - [ ] Email notifications for orders
 - [ ] Reviews and ratings system

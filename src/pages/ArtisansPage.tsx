@@ -44,7 +44,7 @@ export function ArtisansPage() {
                             {artisans.map((artisan) => (
                                 <Link
                                     key={artisan._id}
-                                    to={`/artisans/${artisan._id}`}
+                                    to={`/artisans/${artisan.slug}`}
                                     className="group bg-white rounded-karu overflow-hidden shadow-sm hover:shadow-lg transition-shadow"
                                 >
                                     {/* Cover Image */}

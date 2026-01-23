@@ -68,9 +68,19 @@ export function Header() {
                         </Authenticated>
 
                         {/* Wishlist */}
-                        <button className="p-2 text-karu-charcoal hover:text-karu-terracotta transition-colors relative">
+                        <Link to="/wishlist" className="p-2 text-karu-charcoal hover:text-karu-terracotta transition-colors relative">
                             <Heart className="w-5 h-5" />
-                        </button>
+                            <Authenticated>
+                                {(() => {
+                                    const wishlistCount = useQuery(api.wishlist.getWishlistCount);
+                                    return (wishlistCount ?? 0) > 0 && (
+                                        <span className="absolute -top-1 -right-1 w-4 h-4 bg-karu-terracotta text-white text-xs rounded-full flex items-center justify-center">
+                                            {wishlistCount}
+                                        </span>
+                                    );
+                                })()}
+                            </Authenticated>
+                        </Link>
 
                         {/* Cart */}
                         <Link to="/cart" className="p-2 text-karu-charcoal hover:text-karu-terracotta transition-colors relative">
