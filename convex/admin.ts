@@ -157,7 +157,7 @@ export const getMyOrders = query({
 
                     return {
                         ...order,
-                        customerName: customer?.name || "Unknown Customer",
+                        customerName: order.shippingAddress?.name || customer?.name || "Unknown Customer",
                         // Only include items from this artisan
                         relevantItems: order.items.filter((item) =>
                             productIds.has(item.productId)
