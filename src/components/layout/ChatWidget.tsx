@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAction } from 'convex/react';
+import { api } from '../../../convex/_generated/api';
 
 type Message = {
     id: string;
@@ -21,7 +23,7 @@ export function ChatWidget() {
     const [messages, setMessages] = useState<Message[]>([
         {
             id: '1',
-            text: "Hi there! 👋 I'm your KARU assistant. How can I help you today?",
+            text: "Hi there! 👋 I'm your KARU assistant powered by AI. How can I help you today?",
             sender: 'bot',
             timestamp: new Date(),
         },
@@ -29,6 +31,8 @@ export function ChatWidget() {
     const [inputText, setInputText] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    const geminiChat = useAction(api.gemini.chat);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -38,31 +42,7 @@ export function ChatWidget() {
         scrollToBottom();
     }, [messages, isOpen]);
 
-    const getBotResponse = (text: string): string => {
-        const lowerText = text.toLowerCase();
-
-        if (lowerText.includes('ship') || lowerText.includes('delivery') || lowerText.includes('track')) {
-            return "We ship all over Bangladesh! Delivery usually takes 3-5 business days. You can track your order in the 'Orders' section of your profile.";
-        }
-        if (lowerText.includes('return') || lowerText.includes('refund') || lowerText.includes('exchange')) {
-            return "We accept returns within 7 days of delivery if the item is damaged or incorrect. Please contact support@karu.com for assistance.";
-        }
-        if (lowerText.includes('pay') || lowerText.includes('bkash') || lowerText.includes('nagad') || lowerText.includes('cash')) {
-            return "We accept Cash on Delivery (COD), bKash, and Nagad. Secure online payments are coming soon!";
-        }
-        if (lowerText.includes('order') || lowerText.includes('status')) {
-            return "You can check your order status by logging in and going to 'My Orders'. Let me know if you need help navigating there!";
-        }
-        if (lowerText.includes('contact') || lowerText.includes('support') || lowerText.includes('help')) {
-            return "You can reach our human support team at support@karu.com or call us at +880 1XXX-XXXXXX (10am - 6pm).";
-        }
-        if (lowerText.includes('hello') || lowerText.includes('hi') || lowerText.includes('hey')) {
-            return "Hello! 😊 How can I assist you with your handicraft shopping today?";
-        }
-        return "I'm not sure about that, but I'm learning! You can try asking about shipping, returns, or payments, or contact our support team.";
-    };
-
-    const handleSendMessage = (text: string) => {
+    const handleSendMessage = async (text: string) => {
         if (!text.trim()) return;
 
         const newMessage: Message = {
@@ -76,18 +56,27 @@ export function ChatWidget() {
         setInputText('');
         setIsTyping(true);
 
-        // Simulate AI delay
-        setTimeout(() => {
-            const botResponse = getBotResponse(text);
+        try {
+            const response = await geminiChat({ message: text });
             const botMessage: Message = {
                 id: (Date.now() + 1).toString(),
-                text: botResponse,
+                text: response,
                 sender: 'bot',
                 timestamp: new Date(),
             };
             setMessages((prev) => [...prev, botMessage]);
+        } catch (error) {
+            console.error('Gemini API error:', error);
+            const errorMessage: Message = {
+                id: (Date.now() + 1).toString(),
+                text: "I'm having trouble connecting right now. Please try again or contact support@karu.com for help.",
+                sender: 'bot',
+                timestamp: new Date(),
+            };
+            setMessages((prev) => [...prev, errorMessage]);
+        } finally {
             setIsTyping(false);
-        }, 1000);
+        }
     };
 
     const handleKeyPress = (e: React.KeyboardEvent) => {
