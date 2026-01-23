@@ -34,7 +34,7 @@ export function ProductCard({ id, name, price, artisan, artisanSlug, image, isTr
                 )}
 
                 {/* Wishlist Button */}
-                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white">
+                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity hover:bg-white">
                     <WishlistButton
                         productId={id as Id<"products">}
                         size="sm"

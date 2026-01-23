@@ -124,10 +124,10 @@ export function ProductListingPage() {
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="flex gap-8">
+                <div className="flex flex-col lg:flex-row gap-8">
                     {/* Filter Sidebar */}
                     {showFilters && (
-                        <aside className="w-64 flex-shrink-0">
+                        <aside className="w-full lg:w-64 flex-shrink-0">
                             <FilterSidebar
                                 selectedCategories={selectedCategories}
                                 setSelectedCategories={setSelectedCategories}
@@ -167,7 +167,7 @@ export function ProductListingPage() {
                                 </select>
 
                                 {/* Grid Size Toggle */}
-                                <div className="flex gap-1 border border-karu-sand rounded-karu p-1">
+                                <div className="hidden md:flex gap-1 border border-karu-sand rounded-karu p-1">
                                     <button
                                         onClick={() => setGridSize(3)}
                                         className={`p-2 rounded transition-colors ${gridSize === 3 ? 'bg-karu-terracotta text-white' : 'hover:bg-karu-sand'
@@ -190,7 +190,7 @@ export function ProductListingPage() {
 
                         {/* Product Grid */}
                         {filteredProducts.length > 0 ? (
-                            <div className={`grid gap-6 ${gridSize === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
+                            <div className={`grid gap-6 grid-cols-2 md:grid-cols-3 ${gridSize === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'}`}>
                                 {filteredProducts.map((product) => (
                                     <ProductCard
                                         key={product._id}
