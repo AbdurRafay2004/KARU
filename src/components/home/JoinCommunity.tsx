@@ -7,13 +7,13 @@ export function JoinCommunity() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="max-w-2xl mx-auto text-center md:text-left md:mx-0">
                     <h2 className="font-heading text-2xl md:text-3xl font-semibold mb-4">
-                        Join the Artisan Community
+                        Join the <span className="text-gradient">Artisan</span> Community
                     </h2>
 
                     <p className="text-karu-sand/80 mb-8 max-w-xl">
                         Turn your craft into a business. We provide the platform, you provide
                         the passion. Join thousands of makers sharing their art with the
-                        world.
+                        people of Bangladesh.
                     </p>
 
                     {/* Benefits */}
@@ -24,7 +24,7 @@ export function JoinCommunity() {
                         </div>
                         <div className="flex items-center gap-2 text-sm">
                             <Truck className="w-5 h-5 text-karu-terracotta" />
-                            <span className="text-karu-sand/80">Global Shipping</span>
+                            <span className="text-karu-sand/80">Nationwide Shipping</span>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
                             <Heart className="w-5 h-5 text-karu-terracotta" />

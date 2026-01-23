@@ -6,9 +6,9 @@ export function Footer() {
         <footer className="bg-karu-charcoal text-white">
             {/* Main Footer */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+                <div className="grid grid-cols-2 lg:grid-cols-5 gap-8">
                     {/* Brand */}
-                    <div className="lg:col-span-2">
+                    <div className="col-span-2 lg:col-span-2">
                         <div className="flex items-center gap-2 mb-4">
                             <div className="w-8 h-8 bg-karu-terracotta rounded-full flex items-center justify-center">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-white">
