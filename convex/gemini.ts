@@ -3,6 +3,13 @@
 import { action } from "./_generated/server";
 import { v } from "convex/values";
 import { GoogleGenAI } from "@google/genai";
+import { api } from "./_generated/api";
+import {
+    analyzeIntent,
+    buildProductContext,
+    buildArtisanContext,
+    buildSystemPrompt,
+} from "./ai/helpers";
 
 export const chat = action({
     args: {
@@ -17,16 +24,57 @@ export const chat = action({
 
         const ai = new GoogleGenAI({ apiKey });
 
-        const systemPrompt = `You are a helpful customer support assistant for KARU, a Bangladeshi handicraft marketplace. 
-You help customers with:
-- Order tracking and status
-- Shipping information (we ship all over Bangladesh, 3-5 business days)
-- Return policy (7 days for damaged/incorrect items)
-- Payment methods (Cash on Delivery, bKash, Nagad)
-- General product inquiries
+        // Analyze user message to detect intent
+        const intent = analyzeIntent(args.message);
 
-Keep responses concise, friendly, and helpful. Use emojis sparingly to be warm. 
-If you don't know something specific about an order, suggest the customer check their "My Orders" page or contact support@karu.com.`;
+        let productContext = "";
+        let artisanContext = "";
+
+        try {
+            // Fetch products if relevant
+            if (intent.wantsProducts) {
+                const products = await ctx.runQuery(api.products.list, {
+                    category: intent.category,
+                    maxPrice: intent.maxPrice,
+                });
+
+                // Filter by material if detected
+                let filteredProducts = products;
+                if (intent.material) {
+                    filteredProducts = products.filter((p) =>
+                        p.materials?.some((m) =>
+                            m.toLowerCase().includes(intent.material!.toLowerCase())
+                        )
+                    );
+                }
+
+                if (filteredProducts.length > 0) {
+                    productContext = buildProductContext(filteredProducts, 15);
+                }
+            }
+
+            // Fetch artisans if relevant OR as fallback for product queries
+            if (intent.wantsArtisans || (intent.wantsProducts && !productContext)) {
+                const artisans = await ctx.runQuery(api.artisans.list, {});
+                if (artisans.length > 0) {
+                    artisanContext = buildArtisanContext(artisans, 10);
+                }
+            }
+
+            // If no specific intent detected, provide trending products as context
+            if (!intent.wantsProducts && !intent.wantsArtisans) {
+                const trendingProducts = await ctx.runQuery(api.products.trending, {});
+                if (trendingProducts.length > 0) {
+                    productContext = buildProductContext(trendingProducts, 10);
+                }
+            }
+        } catch (dbError) {
+            console.error("Database query error:", dbError);
+            // Continue with empty context - AI can still answer general questions
+        }
+
+        // Build enhanced system prompt with dynamic context
+        const systemPrompt = buildSystemPrompt(productContext, artisanContext);
 
         try {
             const response = await ai.models.generateContent({

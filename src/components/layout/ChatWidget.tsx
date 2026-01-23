@@ -12,10 +12,10 @@ type Message = {
 };
 
 const SUGGESTED_QUESTIONS = [
-    "Where is my order?",
-    "What is the return policy?",
-    "Do you ship internationally?",
-    "How can I pay?",
+    "Show me handmade pottery 🏺",
+    "What jewelry is available? 💍",
+    "Find me items under 50 taka",
+    "Tell me about your artisans 🎨",
 ];
 
 export function ChatWidget() {
@@ -162,7 +162,7 @@ export function ChatWidget() {
                                 value={inputText}
                                 onChange={(e) => setInputText(e.target.value)}
                                 onKeyDown={handleKeyPress}
-                                placeholder="Ask about orders, shipping..."
+                                placeholder="Ask about products, orders, shipping..."
                                 className="flex-1 bg-stone-100 text-stone-800 text-sm rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-stone-200"
                             />
                             <button

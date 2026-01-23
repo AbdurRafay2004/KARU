@@ -3,7 +3,7 @@
 > A premium handicraft marketplace connecting artisans with conscious buyers. Available all over Bangladesh, not globally.
 
 ## Current Status
-✅ **Gemini AI Chatbot** - Floating chat assistant now powered by Gemini 2.5 Flash Lite via SDK
+✅ **Product-Aware AI Assistant** - Gemini chatbot now queries live product database for intelligent recommendations
 ✅ **Premium UI/UX Complete** - Mobile-responsive design with smooth animations and cultural elements
 ✅ **Design & UX Polished** - Scroll restoration, mobile responsiveness, and premium animations
 ✅ **Shop Manager Enhanced** - Customer names displayed in Orders tab
@@ -20,7 +20,14 @@
 ✅ **Phase 6 Complete** - Convex Backend Integration
 
 ### Implementation Log
-- [x] **Premium UI/UX Enhancements (Latest)**
+- [x] **Product-Aware AI (Latest)**
+  - [x] **Intelligent Intent Analysis**: AI detects product queries, categories, price ranges, and materials
+  - [x] **Database Integration**: Queries Convex for products and artisans based on user questions
+  - [x] **Dynamic Context Injection**: Injects live product data into Gemini's system prompt
+  - [x] **Smart Recommendations**: Filters by category, price ("under X taka"), and materials (jute, ceramic, etc.)
+  - [x] **Product-Focused UI**: Updated suggested questions for shopping assistance
+  - [x] **Helper Utilities**: Created `convex/ai/helpers.ts` with context-building functions
+- [x] **Premium UI/UX Enhancements**
   - [x] **Brand Animation**: Bangla "কারু" signature animation using Anek Bangla font with optimized 6s cycles
   - [x] **Animated Elements**: Logo wiggle, gradient buttons, sliding filter tabs, product transitions
   - [x] **Chat Widget**: Organic blob-shaped floating button with gradient and gentle animation
@@ -44,10 +51,12 @@
 - [x] **Phase 8: AI Experience (Gemini Integration)**
   - [x] Floating Action Chat Button with animations
   - [x] **Gemini 2.5 Flash Lite** integration via `@google/genai` SDK
-  - [x] `convex/gemini.ts` - Convex action using GoogleGenAI SDK with KARU context
+  - [x] `convex/gemini.ts` - Enhanced with product database queries and dynamic context
+  - [x] `convex/ai/helpers.ts` - Intent analysis and context-building utilities
+  - [x] Product-aware responses: searches by category, price, material, artisan
   - [x] `GEMINI_API_KEY` stored in Convex environment variables
-  - [x] Suggested Questions chips for quick interactions
-  - [x] Error handling with fallback messages
+  - [x] Product-focused suggested questions (pottery, jewelry, price queries)
+  - [x] Error handling with graceful fallback messages
   - [x] Workflow guide created at `.agent/workflows/gemini-convex-integration.md`
 - [x] **Image URL Support**
   - [x] Artisan avatar & cover URL inputs in onboarding
