@@ -145,18 +145,28 @@ export const getMyOrders = query({
         // Get all orders
         const allOrders = await ctx.db.query("orders").order("desc").collect();
 
-        // Filter and enrich orders
-        return allOrders
-            .filter((order) =>
-                order.items.some((item) => productIds.has(item.productId))
-            )
-            .map((order) => ({
-                ...order,
-                // Only include items from this artisan
-                relevantItems: order.items.filter((item) =>
-                    productIds.has(item.productId)
-                ),
-            }));
+        // Filter and enrich orders with customer information
+        const enrichedOrders = await Promise.all(
+            allOrders
+                .filter((order) =>
+                    order.items.some((item) => productIds.has(item.productId))
+                )
+                .map(async (order) => {
+                    // Fetch customer/user information
+                    const customer = await ctx.db.get(order.userId);
+
+                    return {
+                        ...order,
+                        customerName: customer?.name || "Unknown Customer",
+                        // Only include items from this artisan
+                        relevantItems: order.items.filter((item) =>
+                            productIds.has(item.productId)
+                        ),
+                    };
+                })
+        );
+
+        return enrichedOrders;
     },
 });
 

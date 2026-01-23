@@ -352,6 +352,9 @@ export function AdminDashboardPage() {
                                             Order ID
                                         </th>
                                         <th className="text-left px-6 py-3 text-sm font-semibold text-karu-charcoal">
+                                            Customer
+                                        </th>
+                                        <th className="text-left px-6 py-3 text-sm font-semibold text-karu-charcoal">
                                             Items
                                         </th>
                                         <th className="text-left px-6 py-3 text-sm font-semibold text-karu-charcoal">
@@ -368,6 +371,11 @@ export function AdminDashboardPage() {
                                             <td className="px-6 py-4">
                                                 <span className="font-mono text-sm text-karu-stone">
                                                     {order._id.slice(0, 12)}...
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className="text-sm text-karu-charcoal font-medium">
+                                                    {order.customerName}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4">
