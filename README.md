@@ -3,6 +3,7 @@
 > A premium handicraft marketplace connecting artisans with conscious buyers. Available all over Bangladesh, not globally.
 
 ## Current Status
+✅ **Phase 7 Complete** - Industry-Grade Architecture (Schema Migration & Authorization)
 ✅ **Phase E Complete** - Checkout, Orders & Admin Dashboard
 ✅ **Phase D Complete** - Vercel Deployment & Environment Fix
 ✅ **Phase C Complete** - User Authentication & Cart
@@ -11,6 +12,16 @@
 ✅ **Phase 6 Complete** - Convex Backend Integration
 
 ### Implementation Log
+- [x] **Phase 7: Industry-Grade Architecture**
+  - [x] Added `userProfiles` table linking users to roles and artisans
+  - [x] Added `userId` field to artisans table for ownership
+  - [x] Created `userProfiles.ts` with profile queries/mutations
+  - [x] Secured `admin.ts` - artisanId derived from auth, not arguments
+  - [x] Product CRUD verifies ownership before modification
+  - [x] Created `UserMenu.tsx` component (Etsy-style dropdown)
+  - [x] Updated `Header.tsx` with avatar dropdown and Shop Manager link
+  - [x] Updated `AdminDashboardPage` to use auth-derived artisan
+  - [x] Artisan onboarding flow (`/sell`, `/onboarding`)
 - [x] **Checkout Flow & Orders**
   - [x] Checkout page with shipping address form
   - [x] Order creation and cart clearing
@@ -39,7 +50,7 @@
 - [x] Product Listing Page with comprehensive filters
 - [x] Artisan Profile Page with biography and story
 - [x] **Convex Backend Integration**
-  - [x] Database schema (products, artisans, categories, users, cart, orders)
+  - [x] Database schema (products, artisans, categories, users, cart, orders, userProfiles)
   - [x] Real-time queries and mutations
   - [x] Seed data (4 artisans, 12 products, 5 categories)
 - [x] **All Pages Connected to Convex**
@@ -79,20 +90,21 @@ For production (Vercel), ensure the following are set:
 ```
 src/
 ├── components/
-│   ├── layout/         # Header, Footer, Layout
+│   ├── layout/         # Header, Footer, Layout, UserMenu
 │   ├── home/           # Homepage sections
 │   └── product/        # ProductCard, FilterSidebar, Gallery, Info
-├── pages/              # Home, Products, ProductDetail, Artisan, Login, Signup, Cart, Checkout, Orders, Admin
+├── pages/              # Home, Products, ProductDetail, Artisan, Login, Signup, Cart, Checkout, Orders, Admin, Sell, Onboarding
 └── router.tsx          # Route definitions
 convex/
-├── schema.ts           # Database schema + auth tables
+├── schema.ts           # Database schema + auth tables + userProfiles
 ├── auth.ts             # Convex Auth configuration
 ├── users.ts            # User and cart mutations
+├── userProfiles.ts     # User profile queries (role, artisan linking)
 ├── products.ts         # Product queries
 ├── artisans.ts         # Artisan queries
 ├── categories.ts       # Category queries
 ├── orders.ts           # Order mutations and queries
-└── admin.ts            # Admin dashboard queries and product CRUD
+└── admin.ts            # Secured artisan dashboard (RBAC)
 ```
 
 ## Routing Architecture
@@ -108,6 +120,7 @@ flowchart TB
         PRODUCTS["/products  ProductListingPage"]
         PRODUCT_DETAIL["/products/:id  ProductDetailPage"]
         ARTISAN["/artisans/:id  ArtisanProfilePage"]
+        SELL["/sell  SellPage"]
     end
     
     subgraph Guest["👤 Guest Only"]
@@ -119,6 +132,7 @@ flowchart TB
         CART["/cart  CartPage"]
         CHECKOUT["/checkout  CheckoutPage"]
         ORDERS["/orders  OrdersPage"]
+        ONBOARDING["/onboarding  OnboardingPage"]
     end
     
     subgraph Artisan["🎨 Artisan Dashboard"]
@@ -133,6 +147,8 @@ flowchart TB
     CHECKOUT --> ORDERS
     LOGIN --> HOME
     SIGNUP --> HOME
+    SELL --> ONBOARDING
+    ONBOARDING --> ADMIN
 ```
 
 ### Route Table
@@ -143,11 +159,13 @@ flowchart TB
 | `/products` | `ProductListingPage` | Public | Filterable product grid with category/price/material filters |
 | `/products/:id` | `ProductDetailPage` | Public | Product gallery, details, add-to-cart, artisan info |
 | `/artisans/:id` | `ArtisanProfilePage` | Public | Artisan biography, story, studio, and product collection |
+| `/sell` | `SellPage` | Public | "Sell on Karu" landing page with benefits and CTAs |
 | `/login` | `LoginPage` | Guest | Email/password authentication |
 | `/signup` | `SignupPage` | Guest | New user registration |
 | `/cart` | `CartPage` | Authenticated | Shopping cart with quantity controls |
 | `/checkout` | `CheckoutPage` | Authenticated | Shipping address form, order placement |
 | `/orders` | `OrdersPage` | Authenticated | Order history with expandable details and status |
+| `/onboarding` | `OnboardingPage` | Authenticated | 3-step artisan shop creation wizard |
 | `/admin` | `AdminDashboardPage` | Artisan | Product CRUD, order management, sales stats |
 
 ### Navigation Flow
@@ -185,97 +203,41 @@ All routes use the shared `<Layout>` component which provides:
 | `:id` | `/products/:id` | Convex product `_id` (e.g., `jh7a...`) |
 | `:id` | `/artisans/:id` | Convex artisan `_id` |
 
-## Architecture Analysis (Deep Dive)
-*Analysis Date: Jan 2026*
+## Architecture: Phase 7 Implementation
+*Completed: Jan 2026*
 
-A critical review of the current codebase reveals three major flaws preventing the platform from being "industry-grade".
+### Unified Identity System ✅
+Users and Artisans are now linked through the `userProfiles` table:
+- **userProfiles table**: Stores `userId`, `role` (user/artisan/admin), and optional `artisanId`
+- **artisans table**: Now includes `userId` field linking back to the owner
+- **Authorization**: All mutations verify ownership via `userProfiles` lookup
 
-### 1. Critical Security Flaws (RBAC)
-- **Issue**: The `convex/admin.ts` mutations (`addProduct`, `updateProduct`) and `orders.ts` (`updateOrderStatus`) have **no authorization checks**.
-- **Impact**: Any logged-in user (buyer) can manually trigger these mutations to delete products or change order statuses if they know the API.
-- **Root Cause**: The backend relies on the UI to hide buttons, but does not verify `user.id` against `artisan.ownerId` on the server.
+### Secure RBAC ✅
+All admin mutations now derive `artisanId` from the authenticated user:
+- `addProduct` - Creates product for logged-in artisan only
+- `updateProduct` / `deleteProduct` - Verifies ownership before modification
+- `updateOrderStatus` - Only artisan can update orders containing their products
 
-### 2. Disconnected Identity System
-- **Issue**: `Users` (Auth) and `Artisans` (Profiles) are in separate, unlinked tables.
-- **Impact**: The system has no way to know if a logged-in user is an artisan. There is no concept of "logging in as a seller".
-- **Current Workaround**: The `/admin` page loads *all* artisans and lets anyone select one to manage.
+### Etsy-Style Navigation ✅
+The Header now supports role-based navigation:
+- **Logged Out**: "Sign in" link
+- **Logged In (Buyer)**: Avatar dropdown with "Orders", "Settings", "Sell on Karu"
+- **Logged In (Artisan)**: Same dropdown but with "Shop Manager" quick-access button
 
-### 3. Missing UX & Navigation
-- **Issue**: The current Header is static. It does not reflect the rich, logged-in state expected of a marketplace (e.g., Etsy).
-- **Missing**:
-    -   No User Dropdown (Profile, Orders, Settings).
-    -   No "Shop Manager" link for artisans.
-    -   No "Become a Seller" onboarding flow.
-
----
-
-## Phase 7: Industry-Grade Architecture Plan
-*Goal: Implement a secure, Etsy-inspired unified user flow.*
-
-### A. Unified Identity Schema
-We will link the User and Artisan worlds.
-1.  **Users Table**: Add `role` ("user", "admin") and `artisanId` (optional link to their shop).
-2.  **Artisans Table**: Add `userId` (owner).
-3.  **Permissions**: All mutations will strictly verify: `item.artisanId === currentUser.artisanId`.
-
-### B. Etsy-Inspired Navigation Flow
-The UX will be restructured to handle dual roles (Buyer + Seller) seamlessly.
-
-**1. The "Etsy" Header**
--   **Logged Out**: Sign In / Join.
--   **Logged In (Buyer)**:
-    -   User Avatar Dropdown:
-        -   *Profile*: "View your profile" (Public).
-        -   *Orders*: "Purchases and reviews".
-        -   *Action*: "Sell on Karu" (Links to Onboarding).
-        -   *Settings*: "Account settings", "Sign out".
--   **Logged In (Artisan)**:
-    -   **Shop Manager Icon**: Dedicated link to `/dashboard` (next to Cart).
-    -   User Dropdown: Same as buyer, but "Sell on Karu" becomes "Shop Manager".
-
-### C. Self-Serve Artisan Onboarding (Option A)
-Users can self-promote to Artisans.
-1.  **Route `/sell`**: Landing page ("Join the community of makers").
-2.  **Route `/onboarding`**: Protected wizard.
-    -   Step 1: Shop Name & Details.
-    -   Step 2: Story & Process.
-    -   Step 3: Location & Categories.
-3.  **Completion**: Creates `Artisan` record, updates `User` record, redirects to `/dashboard`.
-
-### D. Secure Dashboard (`/dashboard`)
-Replaces the insecure `/admin`.
--   **Context-Aware**: Does not accept `?artisanId=`. Instead, queries `getCurrentUser()` -> finds `artisanId` -> loads *that* data.
--   **Features**:
-    -   **Overview**: Sales, visits, pending orders.
-    -   **Products**: Add/Edit *my* products only.
-    -   **Orders**: Manage orders containing *my* items.
+### Self-Serve Artisan Onboarding ✅
+Users can become artisans through a guided flow:
+1. `/sell` - Landing page explaining benefits
+2. `/onboarding` - 3-step wizard (Basics → Story → Details)
+3. On completion, `registerArtisan` mutation creates artisan record and links to user
 
 ---
 
-## Next Steps (Implementation Checklist)
+## Next Steps (Potential Enhancements)
 
-### Step 1: Schema Migration
-- [ ] Update `schema.ts`: Add `role` to users (via auth adapter config or separate table strategy) and `userId` to artisans.
-- [ ] Create `migrate_users` script to assign roles to existing users.
-
-### Step 2: Authentication & Header
-- [ ] Update `Header.tsx` to support the "Etsy-style" dropdown.
-- [ ] Create `UserMenu` component (Avatar + Dropdown).
-- [ ] Implement `useCurrentUser` hook that fetches the extended user profile (including `artisanId`).
-
-### Step 3: Artisan Onboarding
-- [ ] Create `/sell` landing page.
-- [ ] Create `/onboarding` wizard (using React Hook Form).
-- [ ] Implement `registerArtisan` mutation in Convex.
-
-### Step 4: Secure Dashboard
-- [ ] Create `/dashboard` layout (Sidebar + Content).
-- [ ] Refactor `convex/admin.ts` to `convex/dashboard.ts`:
-    -   Remove `artisanId` arguments.
-    -   Derive `artisanId` from `auth.getUserId()`.
-    -   Add strict security checks.
-- [ ] Migrate Product & Order management UI to `/dashboard`.
-
-### Step 5: Platform Admin (Optional)
-- [ ] Move current `/admin` to `/platform-admin`.
-- [ ] Restrict access to `user.role === 'admin'`.
+- [ ] Add image upload for artisan avatars and product photos
+- [ ] Implement search functionality with full-text search
+- [ ] Add wishlist/favorites feature
+- [ ] fake Payment gateway integration showcase (bKash, Nagad)
+- [ ] Email notifications for orders
+- [ ] Reviews and ratings system
+- [ ] Platform admin dashboard for moderating artisans

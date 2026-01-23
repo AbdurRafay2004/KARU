@@ -8,7 +8,20 @@ export const getCurrentUser = query({
     handler: async (ctx) => {
         const userId = await auth.getUserId(ctx);
         if (!userId) return null;
-        return await ctx.db.get(userId);
+
+        const user = await ctx.db.get(userId);
+        if (!user) return null;
+
+        // Fetch user profile for role and artisan info
+        const profile = await ctx.db
+            .query("userProfiles")
+            .withIndex("by_user", (q) => q.eq("userId", userId))
+            .first();
+
+        return {
+            ...user,
+            profile: profile ?? null,
+        };
     },
 });
 

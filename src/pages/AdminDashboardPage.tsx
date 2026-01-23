@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
@@ -13,6 +13,7 @@ import {
     Loader2,
     DollarSign,
     AlertCircle,
+    Store,
 } from 'lucide-react';
 import type { Id } from '../../convex/_generated/dataModel';
 
@@ -20,60 +21,80 @@ type Tab = 'overview' | 'products' | 'orders';
 
 export function AdminDashboardPage() {
     const [activeTab, setActiveTab] = useState<Tab>('overview');
-    const [selectedArtisan, setSelectedArtisan] = useState<Id<"artisans"> | null>(null);
     const [showProductModal, setShowProductModal] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Id<"products"> | null>(null);
 
-    const artisans = useQuery(api.admin.getAllArtisans);
-    const stats = useQuery(
-        api.admin.getDashboardStats,
-        selectedArtisan ? { artisanId: selectedArtisan } : "skip"
-    );
-    const products = useQuery(
-        api.admin.getArtisanProducts,
-        selectedArtisan ? { artisanId: selectedArtisan } : "skip"
-    );
-    const orders = useQuery(
-        api.admin.getArtisanOrders,
-        selectedArtisan ? { artisanId: selectedArtisan } : "skip"
-    );
+    // Get current user with profile - determines if they're an artisan
+    const currentUser = useQuery(api.users.getCurrentUser);
+    const myArtisan = useQuery(api.userProfiles.getMyArtisan);
 
-    const updateOrderStatus = useMutation(api.orders.updateOrderStatus);
+    // Use the new secure queries that derive artisanId from auth
+    const stats = useQuery(api.admin.getDashboardStats);
+    const products = useQuery(api.admin.getMyProducts);
+    const orders = useQuery(api.admin.getMyOrders);
+
+    const updateOrderStatus = useMutation(api.admin.updateOrderStatus);
     const deleteProduct = useMutation(api.admin.deleteProduct);
 
     // Loading state
-    if (artisans === undefined) {
+    if (currentUser === undefined) {
         return (
             <div className="min-h-screen bg-karu-cream flex items-center justify-center">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-karu-terracotta mx-auto mb-4"></div>
-                    <p className="text-karu-stone">Loading admin dashboard...</p>
+                    <p className="text-karu-stone">Loading dashboard...</p>
                 </div>
             </div>
         );
     }
 
-    // No artisans yet
-    if (artisans.length === 0) {
+    // Not logged in
+    if (!currentUser) {
         return (
             <div className="min-h-screen bg-karu-cream py-12 px-4">
-                <div className="max-w-4xl mx-auto text-center">
-                    <AlertCircle className="w-16 h-16 text-karu-sand mx-auto mb-4" />
+                <div className="max-w-lg mx-auto text-center bg-white rounded-karu p-8 shadow-sm">
+                    <AlertCircle className="w-16 h-16 text-karu-terracotta mx-auto mb-4" />
                     <h1 className="font-heading text-2xl font-bold text-karu-charcoal mb-2">
-                        No Artisans Found
+                        Sign In Required
                     </h1>
                     <p className="text-karu-stone mb-6">
-                        Please run the seed script to create sample artisans.
+                        Please sign in to access your shop dashboard.
+                    </p>
+                    <Link
+                        to="/login"
+                        className="inline-flex px-6 py-3 bg-karu-terracotta text-white rounded-karu font-medium hover:bg-karu-clay transition-colors"
+                    >
+                        Sign In
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
+    // Not an artisan - show onboarding prompt
+    if (!currentUser.profile?.artisanId) {
+        return (
+            <div className="min-h-screen bg-karu-cream py-12 px-4">
+                <div className="max-w-lg mx-auto text-center bg-white rounded-karu p-8 shadow-sm">
+                    <Store className="w-16 h-16 text-karu-terracotta mx-auto mb-4" />
+                    <h1 className="font-heading text-2xl font-bold text-karu-charcoal mb-2">
+                        Become a Seller
+                    </h1>
+                    <p className="text-karu-stone mb-6">
+                        You don't have a shop yet. Start selling your handcrafted items on Karu!
+                    </p>
+                    <Link
+                        to="/sell"
+                        className="inline-flex px-6 py-3 bg-karu-terracotta text-white rounded-karu font-medium hover:bg-karu-clay transition-colors"
+                    >
+                        Start Selling
+                    </Link>
+                    <p className="mt-4 text-sm text-karu-stone">
+                        Or <Link to="/" className="text-karu-terracotta hover:underline">continue browsing</Link>
                     </p>
                 </div>
             </div>
         );
-    }
-
-    // Auto-select first artisan
-    if (!selectedArtisan && artisans.length > 0) {
-        setSelectedArtisan(artisans[0]._id);
-        return null;
     }
 
     const tabs = [
@@ -98,25 +119,27 @@ export function AdminDashboardPage() {
                     <div className="flex items-center justify-between">
                         <div>
                             <h1 className="font-heading text-2xl font-bold text-karu-charcoal">
-                                Artisan Dashboard
+                                Shop Manager
                             </h1>
                             <p className="text-karu-stone text-sm mt-1">
-                                Manage your products and orders
+                                {myArtisan?.name || 'Your Shop'} — Manage your products and orders
                             </p>
                         </div>
 
-                        {/* Artisan Selector */}
-                        <select
-                            value={selectedArtisan || ''}
-                            onChange={(e) => setSelectedArtisan(e.target.value as Id<"artisans">)}
-                            className="px-4 py-2 border border-karu-sand rounded-karu bg-white focus:outline-none focus:ring-2 focus:ring-karu-terracotta/20"
-                        >
-                            {artisans.map((artisan) => (
-                                <option key={artisan._id} value={artisan._id}>
-                                    {artisan.name}
-                                </option>
-                            ))}
-                        </select>
+                        {/* Artisan Profile Link */}
+                        {myArtisan && (
+                            <Link
+                                to={`/artisans/${myArtisan._id}`}
+                                className="flex items-center gap-2 px-4 py-2 border border-karu-sand rounded-karu text-karu-charcoal hover:bg-karu-cream transition-colors"
+                            >
+                                <img
+                                    src={myArtisan.avatar}
+                                    alt={myArtisan.name}
+                                    className="w-8 h-8 rounded-full object-cover"
+                                />
+                                <span className="text-sm font-medium">View Public Profile</span>
+                            </Link>
+                        )}
                     </div>
 
                     {/* Tabs */}
@@ -395,9 +418,8 @@ export function AdminDashboardPage() {
             </div>
 
             {/* Product Modal */}
-            {showProductModal && selectedArtisan && (
+            {showProductModal && (
                 <ProductModal
-                    artisanId={selectedArtisan}
                     productId={editingProduct}
                     onClose={() => {
                         setShowProductModal(false);
@@ -409,13 +431,11 @@ export function AdminDashboardPage() {
     );
 }
 
-// Product Modal Component
+// Product Modal Component - no longer needs artisanId prop
 function ProductModal({
-    artisanId,
     productId,
     onClose,
 }: {
-    artisanId: Id<"artisans">;
     productId: Id<"products"> | null;
     onClose: () => void;
 }) {
@@ -437,7 +457,7 @@ function ProductModal({
     });
 
     // Populate form with existing data
-    useState(() => {
+    useEffect(() => {
         if (existingProduct) {
             setFormData({
                 name: existingProduct.name,
@@ -448,7 +468,7 @@ function ProductModal({
                 images: existingProduct.images.join('\n'),
             });
         }
-    });
+    }, [existingProduct]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -470,10 +490,8 @@ function ProductModal({
                     ...productData,
                 });
             } else {
-                await addProduct({
-                    ...productData,
-                    artisanId,
-                });
+                // addProduct no longer needs artisanId - derived from auth
+                await addProduct(productData);
             }
 
             onClose();

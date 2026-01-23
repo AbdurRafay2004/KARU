@@ -10,6 +10,8 @@ import { CartPage } from './pages/CartPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { OrdersPage } from './pages/OrdersPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
+import { SellPage } from './pages/SellPage';
+import { OnboardingPage } from './pages/OnboardingPage';
 
 export const router = createBrowserRouter([
     {
@@ -51,5 +53,13 @@ export const router = createBrowserRouter([
     {
         path: '/admin',
         element: <Layout><AdminDashboardPage /></Layout>,
+    },
+    {
+        path: '/sell',
+        element: <Layout><SellPage /></Layout>,
+    },
+    {
+        path: '/onboarding',
+        element: <Layout><OnboardingPage /></Layout>,
     },
 ]);

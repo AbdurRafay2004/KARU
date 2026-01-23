@@ -1,14 +1,15 @@
-import { Search, ShoppingBag, Heart, User, LogOut, Package } from 'lucide-react';
+import { Search, ShoppingBag, Heart, User, Store } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useQuery } from 'convex/react';
-import { useAuthActions } from '@convex-dev/auth/react';
 import { api } from '../../../convex/_generated/api';
 import { Authenticated, Unauthenticated } from 'convex/react';
+import { UserMenu } from './UserMenu';
 
 export function Header() {
-    const { signOut } = useAuthActions();
     const currentUser = useQuery(api.users.getCurrentUser);
     const cartCount = useQuery(api.users.getCartCount);
+
+    const isArtisan = !!currentUser?.profile?.artisanId;
 
     return (
         <header className="bg-white border-b border-karu-sand sticky top-0 z-50">
@@ -37,7 +38,7 @@ export function Header() {
                     </div>
 
                     {/* Right Actions */}
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 sm:gap-4">
                         {/* Unauthenticated: Show Sign in */}
                         <Unauthenticated>
                             <Link
@@ -50,31 +51,28 @@ export function Header() {
 
                         {/* Authenticated: Show user menu */}
                         <Authenticated>
-                            <div className="hidden sm:flex items-center gap-3">
-                                <span className="text-sm text-karu-stone">
-                                    Hi, {currentUser?.name?.split(' ')[0] || 'there'}
-                                </span>
+                            {/* Shop Manager quick link for artisans (desktop) */}
+                            {isArtisan && (
                                 <Link
-                                    to="/orders"
-                                    className="p-2 text-karu-stone hover:text-karu-terracotta transition-colors"
-                                    title="My Orders"
+                                    to="/admin"
+                                    className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-karu-terracotta bg-karu-terracotta/10 rounded-full hover:bg-karu-terracotta/20 transition-colors"
+                                    title="Shop Manager"
                                 >
-                                    <Package className="w-4 h-4" />
+                                    <Store className="w-4 h-4" />
+                                    <span className="hidden lg:inline">Shop</span>
                                 </Link>
-                                <button
-                                    onClick={() => signOut()}
-                                    className="p-2 text-karu-stone hover:text-karu-terracotta transition-colors"
-                                    title="Sign out"
-                                >
-                                    <LogOut className="w-4 h-4" />
-                                </button>
-                            </div>
+                            )}
+
+                            {/* User Menu Dropdown */}
+                            <UserMenu className="hidden sm:block" />
                         </Authenticated>
 
+                        {/* Wishlist */}
                         <button className="p-2 text-karu-charcoal hover:text-karu-terracotta transition-colors relative">
                             <Heart className="w-5 h-5" />
                         </button>
 
+                        {/* Cart */}
                         <Link to="/cart" className="p-2 text-karu-charcoal hover:text-karu-terracotta transition-colors relative">
                             <ShoppingBag className="w-5 h-5" />
                             {(cartCount ?? 0) > 0 && (
@@ -84,11 +82,16 @@ export function Header() {
                             )}
                         </Link>
 
+                        {/* Mobile User Icon */}
                         <Unauthenticated>
-                            <Link to="/login" className="md:hidden p-2 text-karu-charcoal">
+                            <Link to="/login" className="sm:hidden p-2 text-karu-charcoal">
                                 <User className="w-5 h-5" />
                             </Link>
                         </Unauthenticated>
+
+                        <Authenticated>
+                            <UserMenu className="sm:hidden" />
+                        </Authenticated>
                     </div>
                 </div>
             </div>

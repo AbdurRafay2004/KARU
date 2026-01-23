@@ -5,6 +5,15 @@ import { authTables } from "@convex-dev/auth/server";
 export default defineSchema({
     ...authTables,
 
+    // User profiles table (extends auth users with custom fields)
+    userProfiles: defineTable({
+        userId: v.id("users"),
+        role: v.union(v.literal("user"), v.literal("artisan"), v.literal("admin")),
+        artisanId: v.optional(v.id("artisans")),
+        displayName: v.optional(v.string()),
+        avatarUrl: v.optional(v.string()),
+    }).index("by_user", ["userId"]),
+
     // Products table
     products: defineTable({
         name: v.string(),
@@ -42,8 +51,10 @@ export default defineSchema({
             twitter: v.optional(v.string()),
         }),
         isFeatured: v.optional(v.boolean()),
+        userId: v.optional(v.id("users")), // Owner of this artisan shop
     }).index("by_slug", ["slug"])
-        .index("by_featured", ["isFeatured"]),
+        .index("by_featured", ["isFeatured"])
+        .index("by_user", ["userId"]),
 
     // Categories table
     categories: defineTable({
