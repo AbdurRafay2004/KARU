@@ -24,7 +24,7 @@ function formatMessage(text: string) {
                     const content = line.trim().substring(2); // Remove "* " or "- "
                     return (
                         <div key={i} className="flex gap-2 mb-1">
-                            <span className="text-amber-600 font-bold">•</span>
+                            <span className="text-karu-terracotta font-bold">•</span>
                             <span>{formatInlineMarkdown(content)}</span>
                         </div>
                     );
@@ -158,7 +158,7 @@ export function ChatWidget() {
                         <div className="bg-stone-900 text-white p-4 flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <div className="p-2 bg-stone-800 rounded-full">
-                                    <Sparkles size={18} className="text-amber-400" />
+                                    <Sparkles size={18} className="text-karu-terracotta" />
                                 </div>
                                 <div>
                                     <h3 className="font-medium text-sm">KARU Assistant</h3>
@@ -264,8 +264,8 @@ export function ChatWidget() {
                 )}
                 {!isOpen && (
                     <span className="absolute right-0 top-1 flex h-3 w-3">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-karu-terracotta opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-karu-terracotta"></span>
                     </span>
                 )}
             </motion.button>

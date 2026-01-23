@@ -20,6 +20,18 @@ export const HeroSection = () => {
             {/* Enhanced Gradient Overlay */}
             <div className="absolute inset-0 bg-gradient-to-b from-karu-indigo/10 via-transparent to-karu-cream pointer-events-none"></div>
 
+            {/* Frosted Background Elements */}
+            <div className="absolute top-[10%] left-[5%] w-72 h-72 bg-karu-terracotta/10 rounded-full blur-[100px] animate-pulse pointer-events-none"></div>
+            <div className="absolute bottom-[20%] right-[10%] w-96 h-96 bg-karu-coral/10 rounded-full blur-[120px] animate-pulse pointer-events-none" style={{ animationDelay: '2s' }}></div>
+            <div className="absolute top-[40%] right-[30%] w-64 h-64 bg-karu-emerald/5 rounded-full blur-[80px] animate-pulse pointer-events-none" style={{ animationDelay: '4s' }}></div>
+
+            {/* Bright Orange Organic Circles (User Requested #f78f20) */}
+            <div className="absolute top-[20%] left-[15%] w-56 h-56 bg-[#f78f20]/25 rounded-full blur-[90px] animate-organic pointer-events-none"></div>
+            <div className="absolute bottom-[10%] left-[40%] w-72 h-72 bg-[#f78f20]/20 rounded-full blur-[100px] animate-organic-slow pointer-events-none"></div>
+            <div className="absolute bottom-[2%] left-[75%] w-82 h-82 bg-[#f78f20]/20 rounded-full blur-[70px] animate-organic-slow pointer-events-none"></div>
+            {/* Global Frost Layer */}
+            <div className="absolute inset-0 backdrop-blur-[30px] pointer-events-none"></div>
+
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
                 <div className="grid lg:grid-cols-2 gap-12 items-center">
                     {/* Text Content */}
@@ -36,7 +48,8 @@ export const HeroSection = () => {
 
                         <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-6xl font-bold leading-tight mb-6 text-karu-charcoal">
                             <span className="font-bangla text-gradient-sunset">কারু</span> — Discover the{" "}
-                            <span className="text-gradient">artistry</span>
+                            <span className="font-display italic text-gradient-sunset">artistry</span>
+
                             {" "}behind every piece
                         </h1>
 
