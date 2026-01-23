@@ -11,6 +11,7 @@ import {
     ChevronLeft,
     Check,
     AlertCircle,
+    ImageIcon,
 } from 'lucide-react';
 
 type Step = 1 | 2 | 3;
@@ -30,6 +31,10 @@ interface FormData {
     website: string;
     instagram: string;
     facebook: string;
+
+    // Images
+    avatarUrl: string;
+    coverImageUrl: string;
 }
 
 export function OnboardingPage() {
@@ -51,6 +56,8 @@ export function OnboardingPage() {
         website: '',
         instagram: '',
         facebook: '',
+        avatarUrl: '',
+        coverImageUrl: '',
     });
 
     // Redirect if already an artisan
@@ -132,6 +139,8 @@ export function OnboardingPage() {
                 website: formData.website || undefined,
                 instagram: formData.instagram || undefined,
                 facebook: formData.facebook || undefined,
+                avatarUrl: formData.avatarUrl || undefined,
+                coverImageUrl: formData.coverImageUrl || undefined,
             });
 
             // Success! Redirect to dashboard
@@ -369,6 +378,68 @@ export function OnboardingPage() {
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Image URLs Section */}
+                            <div className="pt-4 border-t border-karu-sand">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-8 h-8 bg-karu-terracotta/10 rounded-full flex items-center justify-center">
+                                        <ImageIcon className="w-4 h-4 text-karu-terracotta" />
+                                    </div>
+                                    <p className="text-sm text-karu-stone">
+                                        Optional: Add your profile images (use services like <a href="https://imgbb.com" target="_blank" rel="noopener noreferrer" className="text-karu-terracotta hover:underline">imgbb.com</a>)
+                                    </p>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-karu-charcoal mb-2">
+                                            Avatar Image URL
+                                        </label>
+                                        <input
+                                            type="url"
+                                            value={formData.avatarUrl}
+                                            onChange={(e) => updateField('avatarUrl', e.target.value)}
+                                            placeholder="https://i.ibb.co.com/xxxxx/avatar.png"
+                                            className="w-full px-4 py-3 border border-karu-sand rounded-karu focus:outline-none focus:ring-2 focus:ring-karu-terracotta/20 font-mono text-sm"
+                                        />
+                                        {formData.avatarUrl && (
+                                            <div className="mt-2 flex items-center gap-3">
+                                                <img
+                                                    src={formData.avatarUrl}
+                                                    alt="Avatar preview"
+                                                    className="w-16 h-16 rounded-full object-cover border-2 border-karu-sand"
+                                                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                                />
+                                                <span className="text-xs text-karu-stone">Preview</span>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-karu-charcoal mb-2">
+                                            Cover Image URL
+                                        </label>
+                                        <input
+                                            type="url"
+                                            value={formData.coverImageUrl}
+                                            onChange={(e) => updateField('coverImageUrl', e.target.value)}
+                                            placeholder="https://i.ibb.co.com/xxxxx/cover.png"
+                                            className="w-full px-4 py-3 border border-karu-sand rounded-karu focus:outline-none focus:ring-2 focus:ring-karu-terracotta/20 font-mono text-sm"
+                                        />
+                                        {formData.coverImageUrl && (
+                                            <div className="mt-2">
+                                                <img
+                                                    src={formData.coverImageUrl}
+                                                    alt="Cover preview"
+                                                    className="w-full h-24 rounded-karu object-cover border-2 border-karu-sand"
+                                                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                                />
+                                                <span className="text-xs text-karu-stone">Preview</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     )}
 
@@ -435,10 +506,10 @@ function ProgressStep({
         <div className="flex flex-col items-center">
             <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-colors ${completed
-                        ? 'bg-green-500 text-white'
-                        : active
-                            ? 'bg-karu-terracotta text-white'
-                            : 'bg-karu-sand text-karu-stone'
+                    ? 'bg-green-500 text-white'
+                    : active
+                        ? 'bg-karu-terracotta text-white'
+                        : 'bg-karu-sand text-karu-stone'
                     }`}
             >
                 {completed ? <Check className="w-5 h-5" /> : number}

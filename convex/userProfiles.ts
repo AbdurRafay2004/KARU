@@ -163,6 +163,8 @@ export const registerArtisan = mutation({
         website: v.optional(v.string()),
         instagram: v.optional(v.string()),
         facebook: v.optional(v.string()),
+        avatarUrl: v.optional(v.string()),
+        coverImageUrl: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
         const userId = await auth.getUserId(ctx);
@@ -207,8 +209,8 @@ export const registerArtisan = mutation({
             specialty: args.specialty,
             email: args.email,
             website: args.website,
-            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop", // Default avatar
-            coverImage: "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=1200&h=400&fit=crop", // Default cover
+            avatar: args.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop",
+            coverImage: args.coverImageUrl || "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=1200&h=400&fit=crop",
             processPhotos: [],
             social: {
                 instagram: args.instagram,

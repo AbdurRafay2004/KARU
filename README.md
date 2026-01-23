@@ -22,6 +22,10 @@
   - [x] "Mock AI" Logic for instant shipping/return answers
   - [x] Suggested Questions chips
   - [x] Zero-cost implementation (no external API deps)
+- [x] **Image URL Support**
+  - [x] Artisan avatar & cover URL inputs in onboarding
+  - [x] Live image previews
+  - [x] Product image URLs in Admin (already supported)
 - [x] **Phase 7: Industry-Grade Architecture**
   - [x] Added `userProfiles` table linking users to roles and artisans
   - [x] Added `userId` field to artisans table for ownership
@@ -264,7 +268,7 @@ Users can become artisans through a guided flow:
 
 ## Next Steps (Potential Enhancements)
 
-- [ ] Add image upload for artisan avatars and product photos (image url)
+- [x] Add image upload for artisan avatars and product photos (via image URL)
 - [x] Implement smart search functionality 
 - [x] Add wishlist/favorites feature
 - [ ] fake Payment gateway integration showcase (bKash, Nagad)
