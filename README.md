@@ -3,24 +3,7 @@
 > A premium handicraft marketplace connecting artisans with conscious buyers. Available all over Bangladesh, not globally.
 
 ## Current Status
-✅ **Brand Unification Complete** - All UI elements (text highlights, buttons, chat widget) aligned with terracotta logo (#C75D3C)
-✅ **Phase 1 UI/UX Transformation Complete** - Premium design system with vibrant colors, modern typography, and micro-animations
-✅ **Resilient AI Assistant** - Model fallback system with 5 Gemini models for high availability
-✅ **Product-Aware AI Assistant** - Gemini chatbot now queries live product database for intelligent recommendations
-✅ **Premium UI/UX Complete** - Mobile-responsive design with smooth animations and cultural elements
-✅ **Design & UX Polished** - Scroll restoration, mobile responsiveness, and premium animations
-✅ **Shop Manager Enhanced** - Customer names displayed in Orders tab
-✅ **Profile & Product Editing** - Settings page for buyers/artisans, product editing in admin
-✅ **Wishlist Feature** - Heart icon on product cards, Save button, dedicated /wishlist page
-✅ **Marketplace Polished** - All links, filters, and hero CTAs functional
-✅ **Phase 8 Complete** - AI Chat Assistant (Gemini Integration)
-✅ **Phase 7 Complete** - Industry-Grade Architecture (Schema Migration & Authorization)
-✅ **Phase E Complete** - Checkout, Orders & Admin Dashboard
-✅ **Phase D Complete** - Vercel Deployment & Environment Fix
-✅ **Phase C Complete** - User Authentication & Cart
-✅ **Phase B Complete** - Homepage Integration
-✅ **Phase A Complete** - Page-to-Page Linking Fixed
-✅ **Phase 6 Complete** - Convex Backend Integration
+
 
 ### Implementation Log
 - [x] **Brand Color Unification (Latest)**
@@ -28,6 +11,15 @@
   - [x] **Harmonized Gradients**: Updated sunset and text gradients to use brand terracotta
   - [x] **Hero Polished**: Unified "কারু", "artistry", and artisan highlights
   - [x] **Chat Widget Aligned**: Toggle button and notification icons matched to logo
+- [x] **Visual Polish & Micro-Interactions (Fresh Updates)**
+  - [x] **Hero Background**: Added premium frosted glass effect with global `backdrop-blur-3xl`
+  - [x] **Organic Animations**: Added floating orange (`#f78f20`) orbs with custom `organic-orbit` animation
+  - [x] **Typography Refinement**: Styled "artistry" with Playfair Display italic serif for elegance
+  - [x] **AI Chatbox Personalization**:
+    - [x] **Header**: Dark charcoal (`#2D2A26`) with terracotta sparkle icon
+    - [x] **User Bubbles**: Terracotta (`#C75D3C`) to match primary CTA buttons
+    - [x] **Send Button**: Unified terracotta background
+    - [x] **Floating Button**: Sunset gradient (`#E88B6A` → `#C75D3C`) with matching ping animation
 - [x] **Phase 1: UI/UX Transformation - Design System Revolution**
   - [x] **Vibrant Color Palette**: Added saffron (#FF6B35), amber (#F7931E), emerald (#2A9D8F), indigo (#264653), coral (#E88B6A)
   - [x] **Premium Gradients**: Sunset, earth, emerald, and royal gradient variables
@@ -305,6 +297,8 @@ flowchart TB
 | `/cart` | `CartPage` | Authenticated | Shopping cart with quantity controls |
 | `/checkout` | `CheckoutPage` | Authenticated | Shipping address form, order placement |
 | `/orders` | `OrdersPage` | Authenticated | Order history with expandable details and status |
+| `/wishlist` | `WishlistPage` | Authenticated | Saved products for future purchase |
+| `/settings` | `SettingsPage` | Authenticated | Profile management, Artisan shop settings (if applicable) |
 | `/onboarding` | `OnboardingPage` | Authenticated | 3-step artisan shop creation wizard |
 | `/admin` | `AdminDashboardPage` | Artisan | Product CRUD, order management, sales stats |
 | `/story`, `/gift-cards`, etc. | `PlaceholderPages` | Public | Footer links with "Coming Soon" placeholders |
@@ -373,12 +367,7 @@ Users can become artisans through a guided flow:
 
 ---
 
-## Next Steps (Potential Enhancements)
-
-- [x] Add image upload for artisan avatars and product photos (via image URL)
-- [x] Implement smart search functionality 
-- [x] Add wishlist/favorites feature
-- [x] Profile settings page for users and artisans
-- [x] many pages don't scroll to top on navigation they open from bottom
 - [ ] Reviews and ratings system
-- [ ] populate with 50 products and 10 artisans
+- [ ] Populate with 50 products and 10 artisans
+- [ ] Implement "Buy Now" (direct checkout) feature
+- [ ] Add "Related Products" section on Product Detail Page

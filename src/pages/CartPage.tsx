@@ -96,7 +96,7 @@ export function CartPage() {
                                         {item.product?.name || 'Unknown Product'}
                                     </h3>
                                     <p className="text-karu-terracotta font-semibold">
-                                        ${item.product?.price || 0}
+                                        ৳{item.product?.price || 0}
                                     </p>
                                     <div className="flex items-center gap-3 mt-2">
                                         <button
@@ -138,17 +138,17 @@ export function CartPage() {
                         <div className="space-y-2 mb-4">
                             <div className="flex justify-between text-karu-stone">
                                 <span>Subtotal</span>
-                                <span>${total.toFixed(2)}</span>
+                                <span>৳{total.toFixed(2)}</span>
                             </div>
                             <div className="flex justify-between text-karu-stone">
                                 <span>Shipping</span>
-                                <span>{total >= 150 ? 'Free' : '$10.00'}</span>
+                                <span>{total >= 150 ? 'Free' : '৳10.00'}</span>
                             </div>
                         </div>
                         <div className="border-t border-karu-sand pt-4 mb-6">
                             <div className="flex justify-between font-semibold text-karu-charcoal">
                                 <span>Total</span>
-                                <span>${(total + (total >= 150 ? 0 : 10)).toFixed(2)}</span>
+                                <span>৳{(total + (total >= 150 ? 0 : 10)).toFixed(2)}</span>
                             </div>
                         </div>
                         <Link
@@ -158,7 +158,7 @@ export function CartPage() {
                             Proceed to Checkout
                         </Link>
                         <p className="text-xs text-karu-stone text-center mt-4">
-                            Free shipping on orders over $150
+                            Free shipping on orders over ৳150
                         </p>
                     </div>
                 </div>

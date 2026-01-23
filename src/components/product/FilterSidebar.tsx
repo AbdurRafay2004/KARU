@@ -116,8 +116,8 @@ export function FilterSidebar({
                         className="w-full accent-karu-terracotta"
                     />
                     <div className="flex justify-between text-xs text-karu-stone">
-                        <span>${priceRange[0]}</span>
-                        <span>${priceRange[1]}</span>
+                        <span>৳{priceRange[0]}</span>
+                        <span>৳{priceRange[1]}</span>
                     </div>
                 </div>
             </div>

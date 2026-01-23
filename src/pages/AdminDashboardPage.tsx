@@ -188,7 +188,7 @@ export function AdminDashboardPage() {
                                 <div>
                                     <p className="text-sm text-karu-stone">Total Sales</p>
                                     <p className="text-2xl font-bold text-karu-charcoal">
-                                        ${stats.totalSales.toFixed(2)}
+                                        ৳{stats.totalSales.toFixed(2)}
                                     </p>
                                 </div>
                             </div>
@@ -286,7 +286,7 @@ export function AdminDashboardPage() {
                                                 {product.category}
                                             </td>
                                             <td className="px-6 py-4 text-karu-charcoal">
-                                                ${product.price}
+                                                ৳{product.price}
                                             </td>
                                             <td className="px-6 py-4">
                                                 <span
@@ -388,7 +388,7 @@ export function AdminDashboardPage() {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 text-karu-charcoal">
-                                                ${order.relevantItems
+                                                ৳{order.relevantItems
                                                     .reduce((sum, item) => sum + item.price * item.quantity, 0)
                                                     .toFixed(2)}
                                             </td>
@@ -556,7 +556,7 @@ function ProductModal({
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-karu-charcoal mb-1">
-                                Price ($)
+                                Price (৳)
                             </label>
                             <input
                                 type="number"

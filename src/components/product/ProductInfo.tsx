@@ -54,9 +54,9 @@ export function ProductInfo({ productId, name, price, category, description, art
                 </h1>
                 <div className="flex items-center gap-4">
                     <span className="font-heading text-2xl font-semibold text-karu-terracotta">
-                        ${price}
+                        ৳{price}
                     </span>
-                    <span className="text-sm text-karu-stone">Free shipping on orders over $150</span>
+                    <span className="text-sm text-karu-stone">Free shipping on orders over ৳150</span>
                 </div>
             </div>
 

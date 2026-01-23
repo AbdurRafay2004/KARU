@@ -304,7 +304,7 @@ export function CheckoutPage() {
                                                 </p>
                                             </div>
                                             <p className="text-sm font-medium text-karu-charcoal">
-                                                ${((item.product?.price || 0) * item.quantity).toFixed(2)}
+                                                ৳{((item.product?.price || 0) * item.quantity).toFixed(2)}
                                             </p>
                                         </div>
                                     ))}
@@ -314,15 +314,15 @@ export function CheckoutPage() {
                                 <div className="space-y-2 border-t border-karu-sand pt-4 mb-6">
                                     <div className="flex justify-between text-karu-stone">
                                         <span>Subtotal</span>
-                                        <span>${subtotal.toFixed(2)}</span>
+                                        <span>৳{subtotal.toFixed(2)}</span>
                                     </div>
                                     <div className="flex justify-between text-karu-stone">
                                         <span>Shipping</span>
-                                        <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+                                        <span>{shipping === 0 ? 'Free' : `৳${shipping.toFixed(2)}`}</span>
                                     </div>
                                     <div className="flex justify-between font-semibold text-karu-charcoal text-lg pt-2 border-t border-karu-sand">
                                         <span>Total</span>
-                                        <span>${total.toFixed(2)}</span>
+                                        <span>৳{total.toFixed(2)}</span>
                                     </div>
                                 </div>
 
@@ -343,7 +343,7 @@ export function CheckoutPage() {
                                 </button>
 
                                 <p className="text-xs text-karu-stone text-center mt-4">
-                                    Free shipping on orders over $150
+                                    Free shipping on orders over ৳150
                                 </p>
                             </div>
                         </div>

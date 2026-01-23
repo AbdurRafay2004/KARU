@@ -120,7 +120,7 @@ export function OrdersPage() {
                                             {status.label}
                                         </span>
                                         <span className="font-semibold text-karu-charcoal">
-                                            ${order.total.toFixed(2)}
+                                            ৳{order.total.toFixed(2)}
                                         </span>
                                         {isExpanded ? (
                                             <ChevronUp className="w-5 h-5 text-karu-stone" />
@@ -150,7 +150,7 @@ export function OrdersPage() {
                                                             </span>
                                                         </div>
                                                         <span className="text-karu-charcoal">
-                                                            ${(item.price * item.quantity).toFixed(2)}
+                                                            ৳{(item.price * item.quantity).toFixed(2)}
                                                         </span>
                                                     </div>
                                                 ))}
