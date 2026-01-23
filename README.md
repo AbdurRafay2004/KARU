@@ -3,6 +3,7 @@
 > A premium handicraft marketplace connecting artisans with conscious buyers. Available all over Bangladesh, not globally.
 
 ## Current Status
+✅ **Profile & Product Editing** - Settings page for buyers/artisans, product editing in admin
 ✅ **Wishlist Feature** - Heart icon on product cards, Save button, dedicated /wishlist page
 ✅ **Marketplace Polished** - All links, filters, and hero CTAs functional
 ✅ **Phase 8 Complete** - AI Chat Assistant (No-Cost Implementation)
@@ -15,6 +16,12 @@
 ✅ **Phase 6 Complete** - Convex Backend Integration
 
 ### Implementation Log
+- [x] **Profile Settings & Product Editing**
+  - [x] New `/settings` page with Profile tab for all users
+  - [x] Shop tab for artisans (name, bio, story, location, social links, images)
+  - [x] `updateProfile` mutation for display name and avatar URL
+  - [x] `updateArtisanProfile` mutation for artisan shop details
+  - [x] Product editing modal in Admin Dashboard (verified working)
 - [x] **Bug Fixes**
   - [x] Fixed "Become a Seller" link 404 error
 - [x] **Phase 8: AI Experience**
@@ -271,5 +278,6 @@ Users can become artisans through a guided flow:
 - [x] Add image upload for artisan avatars and product photos (via image URL)
 - [x] Implement smart search functionality 
 - [x] Add wishlist/favorites feature
+- [x] Profile settings page for users and artisans
 - [ ] fake Payment gateway integration showcase (bKash, Nagad)
 - [ ] Reviews and ratings system

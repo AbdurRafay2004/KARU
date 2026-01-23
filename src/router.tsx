@@ -14,6 +14,7 @@ import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { SellPage } from './pages/SellPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { WishlistPage } from './pages/WishlistPage';
+import { SettingsPage } from './pages/SettingsPage';
 import {
     MarketplacePage,
     StoryPage,
@@ -88,6 +89,10 @@ export const router = createBrowserRouter([
     {
         path: '/wishlist',
         element: <Layout><WishlistPage /></Layout>,
+    },
+    {
+        path: '/settings',
+        element: <Layout><SettingsPage /></Layout>,
     },
     // Footer placeholder pages
     {

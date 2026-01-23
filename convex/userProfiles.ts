@@ -237,3 +237,100 @@ export const registerArtisan = mutation({
         return artisanId;
     },
 });
+
+/**
+ * Update current user's profile (displayName, avatar)
+ */
+export const updateProfile = mutation({
+    args: {
+        displayName: v.optional(v.string()),
+        avatarUrl: v.optional(v.string()),
+    },
+    handler: async (ctx, args) => {
+        const userId = await auth.getUserId(ctx);
+        if (!userId) throw new Error("Not authenticated");
+
+        const existingProfile = await ctx.db
+            .query("userProfiles")
+            .withIndex("by_user", (q) => q.eq("userId", userId))
+            .first();
+
+        // Filter out undefined values
+        const updates: Record<string, string> = {};
+        if (args.displayName !== undefined) updates.displayName = args.displayName;
+        if (args.avatarUrl !== undefined) updates.avatarUrl = args.avatarUrl;
+
+        if (existingProfile) {
+            await ctx.db.patch(existingProfile._id, updates);
+            return existingProfile._id;
+        } else {
+            // Create profile if it doesn't exist
+            return await ctx.db.insert("userProfiles", {
+                userId,
+                role: "user",
+                ...updates,
+            });
+        }
+    },
+});
+
+/**
+ * Update current user's artisan shop profile
+ * Only accessible by users who are artisans
+ */
+export const updateArtisanProfile = mutation({
+    args: {
+        name: v.optional(v.string()),
+        bio: v.optional(v.string()),
+        story: v.optional(v.string()),
+        location: v.optional(v.string()),
+        specialty: v.optional(v.string()),
+        email: v.optional(v.string()),
+        website: v.optional(v.string()),
+        avatarUrl: v.optional(v.string()),
+        coverImageUrl: v.optional(v.string()),
+        instagram: v.optional(v.string()),
+        facebook: v.optional(v.string()),
+        twitter: v.optional(v.string()),
+    },
+    handler: async (ctx, args) => {
+        const userId = await auth.getUserId(ctx);
+        if (!userId) throw new Error("Not authenticated");
+
+        const profile = await ctx.db
+            .query("userProfiles")
+            .withIndex("by_user", (q) => q.eq("userId", userId))
+            .first();
+
+        if (!profile?.artisanId) {
+            throw new Error("You are not an artisan");
+        }
+
+        // Build updates object, filtering out undefined values
+        const updates: Record<string, unknown> = {};
+        if (args.name !== undefined) updates.name = args.name;
+        if (args.bio !== undefined) updates.bio = args.bio;
+        if (args.story !== undefined) updates.story = args.story;
+        if (args.location !== undefined) updates.location = args.location;
+        if (args.specialty !== undefined) updates.specialty = args.specialty;
+        if (args.email !== undefined) updates.email = args.email;
+        if (args.website !== undefined) updates.website = args.website;
+        if (args.avatarUrl !== undefined) updates.avatar = args.avatarUrl;
+        if (args.coverImageUrl !== undefined) updates.coverImage = args.coverImageUrl;
+
+        // Handle social links
+        if (args.instagram !== undefined || args.facebook !== undefined || args.twitter !== undefined) {
+            const artisan = await ctx.db.get(profile.artisanId);
+            if (artisan) {
+                updates.social = {
+                    instagram: args.instagram ?? artisan.social?.instagram,
+                    facebook: args.facebook ?? artisan.social?.facebook,
+                    twitter: args.twitter ?? artisan.social?.twitter,
+                };
+            }
+        }
+
+        await ctx.db.patch(profile.artisanId, updates);
+        return profile.artisanId;
+    },
+});
