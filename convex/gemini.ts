@@ -11,6 +11,15 @@ import {
     buildSystemPrompt,
 } from "./ai/helpers";
 
+// Model fallback chain prioritizing speed and reliability
+const MODEL_FALLBACK_CHAIN = [
+    "gemini-2.5-flash-lite",      // Fastest, most cost-effective
+    "gemini-2.0-flash-lite",      // Backup lite option
+    "gemini-2.5-flash",           // Good balance of speed and quality
+    "gemini-3-flash-preview",     // Latest flash model
+    "gemini-2.0-flash",           // Stable fallback
+] as const;
+
 export const chat = action({
     args: {
         message: v.string(),
@@ -76,22 +85,50 @@ export const chat = action({
         // Build enhanced system prompt with dynamic context
         const systemPrompt = buildSystemPrompt(productContext, artisanContext);
 
-        try {
-            const response = await ai.models.generateContent({
-                model: "gemini-2.5-flash-lite",
-                contents: `${systemPrompt}\n\nCustomer message: ${args.message}`,
-            });
+        // Try each model in the fallback chain
+        let lastError: any = null;
 
-            const text = response.text;
+        for (const model of MODEL_FALLBACK_CHAIN) {
+            try {
+                console.log(`Attempting with model: ${model}`);
 
-            if (!text) {
-                throw new Error("No response text from Gemini API");
+                const response = await ai.models.generateContent({
+                    model,
+                    contents: `${systemPrompt}\n\nCustomer message: ${args.message}`,
+                });
+
+                const text = response.text;
+
+                if (!text) {
+                    throw new Error("No response text from Gemini API");
+                }
+
+                console.log(`✓ Success with model: ${model}`);
+                return text;
+            } catch (error: any) {
+                console.error(`✗ Model ${model} failed:`, error.message || error);
+                lastError = error;
+
+                // Check if it's a rate limit or availability error
+                const errorStatus = error?.status;
+                const shouldRetry = errorStatus === 404 ||
+                    errorStatus === 429 ||
+                    errorStatus === 503 ||
+                    error?.message?.includes("not found") ||
+                    error?.message?.includes("rate limit");
+
+                if (!shouldRetry) {
+                    // If it's not a retryable error, throw immediately
+                    throw new Error(`Gemini API error: ${error.message || error}`);
+                }
+
+                // Continue to next model in chain
+                continue;
             }
-
-            return text;
-        } catch (error) {
-            console.error("Gemini API error:", error);
-            throw new Error(`Gemini API error: ${error}`);
         }
+
+        // All models failed
+        console.error("All models in fallback chain failed");
+        throw new Error(`Gemini API error: All models failed. Last error: ${lastError?.message || lastError}`);
     },
 });
