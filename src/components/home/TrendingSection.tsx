@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 import { ProductCard } from '../product/ProductCard';
@@ -10,6 +10,28 @@ export function TrendingSection() {
 
     // Fetch trending products from Convex
     const trendingProducts = useQuery(api.products.trending);
+
+    // Filter products based on active tab
+    const filteredProducts = useMemo(() => {
+        if (!trendingProducts) return undefined;
+
+        switch (activeTab) {
+            case 'new':
+                // Sort by creation time (newest first) and take top items
+                return [...trendingProducts]
+                    .sort((a, b) => (b._creationTime || 0) - (a._creationTime || 0))
+                    .slice(0, 4);
+            case 'bestsellers':
+                // For now, show products with higher prices as "bestsellers" (mock logic)
+                // In a real app, this would use sales data
+                return [...trendingProducts]
+                    .sort((a, b) => b.price - a.price)
+                    .slice(0, 4);
+            case 'all':
+            default:
+                return trendingProducts;
+        }
+    }, [trendingProducts, activeTab]);
 
     const tabs: { id: FilterTab; label: string }[] = [
         { id: 'all', label: 'All' },
@@ -47,7 +69,7 @@ export function TrendingSection() {
                 </div>
 
                 {/* Product Grid */}
-                {trendingProducts === undefined ? (
+                {filteredProducts === undefined ? (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                         {[1, 2, 3, 4].map((i) => (
                             <div key={i} className="animate-pulse">
@@ -57,9 +79,9 @@ export function TrendingSection() {
                             </div>
                         ))}
                     </div>
-                ) : trendingProducts.length > 0 ? (
+                ) : filteredProducts.length > 0 ? (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                        {trendingProducts.map((product) => (
+                        {filteredProducts.map((product) => (
                             <ProductCard
                                 key={product._id}
                                 id={product._id}
@@ -74,7 +96,7 @@ export function TrendingSection() {
                     </div>
                 ) : (
                     <div className="text-center py-12">
-                        <p className="text-karu-stone">No trending products at the moment.</p>
+                        <p className="text-karu-stone">No products found for this filter.</p>
                     </div>
                 )}
 

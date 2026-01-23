@@ -4,6 +4,7 @@ import { HomePage } from './pages/HomePage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { ProductListingPage } from './pages/ProductListingPage';
 import { ArtisanProfilePage } from './pages/ArtisanProfilePage';
+import { ArtisansPage } from './pages/ArtisansPage';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 import { CartPage } from './pages/CartPage';
@@ -12,6 +13,19 @@ import { OrdersPage } from './pages/OrdersPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { SellPage } from './pages/SellPage';
 import { OnboardingPage } from './pages/OnboardingPage';
+import {
+    MarketplacePage,
+    StoryPage,
+    GiftCardsPage,
+    SustainabilityPage,
+    CareersPage,
+    PressPage,
+    ShippingPage,
+    HelpPage,
+    ContactPage,
+    PrivacyPage,
+    TermsPage,
+} from './pages/PlaceholderPages';
 
 export const router = createBrowserRouter([
     {
@@ -27,8 +41,16 @@ export const router = createBrowserRouter([
         element: <Layout><ProductDetailPage /></Layout>,
     },
     {
+        path: '/artisans',
+        element: <Layout><ArtisansPage /></Layout>,
+    },
+    {
         path: '/artisans/:id',
         element: <Layout><ArtisanProfilePage /></Layout>,
+    },
+    {
+        path: '/marketplace',
+        element: <Layout><MarketplacePage /></Layout>,
     },
     {
         path: '/login',
@@ -61,5 +83,46 @@ export const router = createBrowserRouter([
     {
         path: '/onboarding',
         element: <Layout><OnboardingPage /></Layout>,
+    },
+    // Footer placeholder pages
+    {
+        path: '/story',
+        element: <Layout><StoryPage /></Layout>,
+    },
+    {
+        path: '/gift-cards',
+        element: <Layout><GiftCardsPage /></Layout>,
+    },
+    {
+        path: '/sustainability',
+        element: <Layout><SustainabilityPage /></Layout>,
+    },
+    {
+        path: '/careers',
+        element: <Layout><CareersPage /></Layout>,
+    },
+    {
+        path: '/press',
+        element: <Layout><PressPage /></Layout>,
+    },
+    {
+        path: '/shipping',
+        element: <Layout><ShippingPage /></Layout>,
+    },
+    {
+        path: '/help',
+        element: <Layout><HelpPage /></Layout>,
+    },
+    {
+        path: '/contact',
+        element: <Layout><ContactPage /></Layout>,
+    },
+    {
+        path: '/privacy',
+        element: <Layout><PrivacyPage /></Layout>,
+    },
+    {
+        path: '/terms',
+        element: <Layout><TermsPage /></Layout>,
     },
 ]);

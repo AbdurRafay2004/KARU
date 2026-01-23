@@ -158,6 +158,7 @@ flowchart TB
 | `/` | `HomePage` | Public | Hero, trending products, categories, featured artisan |
 | `/products` | `ProductListingPage` | Public | Filterable product grid with category/price/material filters |
 | `/products/:id` | `ProductDetailPage` | Public | Product gallery, details, add-to-cart, artisan info |
+| `/artisans` | `ArtisansPage` | Public | List of all artisans with cards |
 | `/artisans/:id` | `ArtisanProfilePage` | Public | Artisan biography, story, studio, and product collection |
 | `/sell` | `SellPage` | Public | "Sell on Karu" landing page with benefits and CTAs |
 | `/login` | `LoginPage` | Guest | Email/password authentication |
@@ -167,6 +168,7 @@ flowchart TB
 | `/orders` | `OrdersPage` | Authenticated | Order history with expandable details and status |
 | `/onboarding` | `OnboardingPage` | Authenticated | 3-step artisan shop creation wizard |
 | `/admin` | `AdminDashboardPage` | Artisan | Product CRUD, order management, sales stats |
+| `/story`, `/gift-cards`, etc. | `PlaceholderPages` | Public | Footer links with "Coming Soon" placeholders |
 
 ### Navigation Flow
 
