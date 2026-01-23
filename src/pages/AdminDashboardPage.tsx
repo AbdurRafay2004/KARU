@@ -129,7 +129,7 @@ export function AdminDashboardPage() {
                         {/* Artisan Profile Link */}
                         {myArtisan && (
                             <Link
-                                to={`/artisans/${myArtisan._id}`}
+                                to={`/artisans/${myArtisan.slug}`}
                                 className="flex items-center gap-2 px-4 py-2 border border-karu-sand rounded-karu text-karu-charcoal hover:bg-karu-cream transition-colors"
                             >
                                 <img

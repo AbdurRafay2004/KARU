@@ -281,3 +281,4 @@ Users can become artisans through a guided flow:
 - [x] Profile settings page for users and artisans
 - [ ] fake Payment gateway integration showcase (bKash, Nagad)
 - [ ] Reviews and ratings system
+- [ ] populate with 50 products and 10 artisans
