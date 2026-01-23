@@ -15,8 +15,8 @@ function BrandName() {
             setShowSignature(true);
             setTimeout(() => {
                 setShowSignature(false);
-            }, 3000); // Show signature for 3 seconds
-        }, 8000); // Cycle every 8 seconds
+            }, 2000); // Show signature for 2 seconds
+        }, 6000); // Cycle every 6 seconds
 
         return () => clearInterval(interval);
     }, []);
@@ -27,22 +27,22 @@ function BrandName() {
                 {showSignature ? (
                     <motion.span
                         key="signature"
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.5 }}
-                        className="absolute text-2xl text-karu-charcoal"
-                        style={{ fontFamily: "'Dancing Script', cursive" }}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="absolute text-2xl text-karu-charcoal font-medium"
+                        style={{ fontFamily: "'Anek Bangla', sans-serif" }}
                     >
-                        Karu
+                        কারু
                     </motion.span>
                 ) : (
                     <motion.span
                         key="standard"
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        transition={{ duration: 0.5 }}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
                         className="absolute font-heading font-semibold text-xl text-karu-charcoal"
                     >
                         KARU
