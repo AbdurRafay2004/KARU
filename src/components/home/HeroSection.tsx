@@ -57,8 +57,8 @@ export const HeroSection = () => {
                                 <p className="text-sm text-karu-stone">Products</p>
                             </div>
                             <div>
-                                <p className="font-heading text-3xl font-semibold text-karu-terracotta">180+</p>
-                                <p className="text-sm text-karu-stone">Countries</p>
+                                <p className="font-heading text-3xl font-semibold text-karu-terracotta">64</p>
+                                <p className="text-sm text-karu-stone">Districts</p>
                             </div>
                         </div>
                     </motion.div>
