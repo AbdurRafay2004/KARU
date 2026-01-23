@@ -44,7 +44,8 @@ export function UserMenu({ className = '' }: UserMenuProps) {
     };
 
     const isArtisan = !!currentUser?.profile?.artisanId;
-    const displayName = currentUser?.name || currentUser?.email?.split('@')[0] || 'User';
+    const displayName = currentUser?.profile?.displayName || currentUser?.name || currentUser?.email?.split('@')[0] || 'User';
+    const avatarUrl = currentUser?.profile?.avatarUrl || currentUser?.image;
     const initial = displayName.charAt(0).toUpperCase();
 
     return (
@@ -56,9 +57,22 @@ export function UserMenu({ className = '' }: UserMenuProps) {
                 aria-expanded={isOpen}
                 aria-haspopup="true"
             >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-karu-terracotta to-karu-ochre flex items-center justify-center text-white font-medium text-sm shadow-sm">
-                    {initial}
-                </div>
+                {avatarUrl ? (
+                    <img
+                        src={avatarUrl}
+                        alt={displayName}
+                        className="w-8 h-8 rounded-full object-cover border border-karu-sand"
+                        onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                            // Fallback to initial logic if needed, but keeping it simple for now, 
+                            // the sibling div below could be shown conditionally if image fails/is missing
+                        }}
+                    />
+                ) : (
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-karu-terracotta to-karu-ochre flex items-center justify-center text-white font-medium text-sm shadow-sm">
+                        {initial}
+                    </div>
+                )}
                 <ChevronDown className={`w-4 h-4 text-karu-stone transition-transform ${isOpen ? 'rotate-180' : ''}`} />
             </button>
 
