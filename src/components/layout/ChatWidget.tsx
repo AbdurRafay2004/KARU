@@ -11,6 +11,65 @@ type Message = {
     timestamp: Date;
 };
 
+// Simple markdown formatter for chat messages
+function formatMessage(text: string) {
+    // Split by line breaks
+    const lines = text.split('\n');
+
+    return (
+        <>
+            {lines.map((line, i) => {
+                // Handle bullet points (lines starting with * or -)
+                if (line.trim().match(/^[*-]\s+/)) {
+                    const content = line.trim().substring(2); // Remove "* " or "- "
+                    return (
+                        <div key={i} className="flex gap-2 mb-1">
+                            <span className="text-amber-600 font-bold">•</span>
+                            <span>{formatInlineMarkdown(content)}</span>
+                        </div>
+                    );
+                }
+
+                // Regular line
+                if (line.trim()) {
+                    return <div key={i} className="mb-1">{formatInlineMarkdown(line)}</div>;
+                }
+
+                // Empty line
+                return <div key={i} className="h-2"></div>;
+            })}
+        </>
+    );
+}
+
+// Format inline markdown (bold text with **)
+function formatInlineMarkdown(text: string) {
+    const parts = [];
+    let key = 0;
+
+    // Match **bold** patterns
+    const boldRegex = /\*\*([^*]+)\*\*/g;
+    let lastIndex = 0;
+    let match;
+
+    while ((match = boldRegex.exec(text)) !== null) {
+        // Add text before the match
+        if (match.index > lastIndex) {
+            parts.push(text.substring(lastIndex, match.index));
+        }
+        // Add bold text
+        parts.push(<strong key={key++} className="font-semibold">{match[1]}</strong>);
+        lastIndex = match.index + match[0].length;
+    }
+
+    // Add remaining text
+    if (lastIndex < text.length) {
+        parts.push(text.substring(lastIndex));
+    }
+
+    return parts.length > 0 ? parts : text;
+}
+
 const SUGGESTED_QUESTIONS = [
     "Show me handmade pottery 🏺",
     "What jewelry is available? 💍",
@@ -124,7 +183,7 @@ export function ChatWidget() {
                                         : 'bg-white text-stone-800 shadow-sm border border-stone-100 self-start rounded-bl-none'
                                         }`}
                                 >
-                                    {msg.text}
+                                    {msg.sender === 'bot' ? formatMessage(msg.text) : msg.text}
                                 </div>
                             ))}
                             {isTyping && (

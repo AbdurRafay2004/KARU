@@ -27,6 +27,7 @@
   - [x] **Smart Recommendations**: Filters by category, price ("under X taka"), and materials (jute, ceramic, etc.)
   - [x] **Product-Focused UI**: Updated suggested questions for shopping assistance
   - [x] **Helper Utilities**: Created `convex/ai/helpers.ts` with context-building functions
+  - [x] **Message Formatting**: Markdown renderer for line breaks, bullet points, and bold text
 - [x] **Premium UI/UX Enhancements**
   - [x] **Brand Animation**: Bangla "কারু" signature animation using Anek Bangla font with optimized 6s cycles
   - [x] **Animated Elements**: Logo wiggle, gradient buttons, sliding filter tabs, product transitions
