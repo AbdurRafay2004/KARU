@@ -1,10 +1,58 @@
-import { useState, type FormEvent } from 'react';
+import { useState, type FormEvent, useEffect } from 'react';
 import { Search, ShoppingBag, Heart, User, Store } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 import { Authenticated, Unauthenticated } from 'convex/react';
 import { UserMenu } from './UserMenu';
+import { AnimatePresence, motion } from 'framer-motion';
+
+function BrandName() {
+    const [showSignature, setShowSignature] = useState(false);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setShowSignature(true);
+            setTimeout(() => {
+                setShowSignature(false);
+            }, 3000); // Show signature for 3 seconds
+        }, 8000); // Cycle every 8 seconds
+
+        return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <div className="relative w-16 h-6 flex items-center">
+            <AnimatePresence mode="wait">
+                {showSignature ? (
+                    <motion.span
+                        key="signature"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        transition={{ duration: 0.5 }}
+                        className="absolute text-2xl text-karu-charcoal"
+                        style={{ fontFamily: "'Dancing Script', cursive" }}
+                    >
+                        Karu
+                    </motion.span>
+                ) : (
+                    <motion.span
+                        key="standard"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        transition={{ duration: 0.5 }}
+                        className="absolute font-heading font-semibold text-xl text-karu-charcoal"
+                    >
+                        KARU
+                    </motion.span>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}
+
 
 export function Header() {
     const navigate = useNavigate();
@@ -32,7 +80,7 @@ export function Header() {
                                 <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c1.5 0 3-.3 4.3-.9C14.8 19 12 16 12 12s2.8-7 6.3-9.1C16.9 2.3 14.6 2 12 2z" fill="currentColor" />
                             </svg>
                         </div>
-                        <span className="font-heading font-semibold text-xl text-karu-charcoal">KARU</span>
+                        <BrandName />
                     </Link>
 
                     {/* Search Bar */}
