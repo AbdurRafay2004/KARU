@@ -3,6 +3,7 @@
 > A premium handicraft marketplace connecting artisans with conscious buyers. Available all over Bangladesh, not globally.
 
 ## Current Status
+✅ **Design & UX Polished** - Scroll restoration, mobile responsiveness, and premium animations implemented
 ✅ **Profile & Product Editing** - Settings page for buyers/artisans, product editing in admin
 ✅ **Wishlist Feature** - Heart icon on product cards, Save button, dedicated /wishlist page
 ✅ **Marketplace Polished** - All links, filters, and hero CTAs functional
@@ -16,6 +17,12 @@
 ✅ **Phase 6 Complete** - Convex Backend Integration
 
 ### Implementation Log
+- [x] **Design & UX Improvements**
+  - [x] **Scroll Restoration**: Implemented `ScrollToTop` component for consistent navigation
+  - [x] **Mobile Responsiveness**: 2-column product grid on mobile, responsive filter sidebar, and touch-optimized gallery
+  - [x] **Premium UI Polish**: Animated logo wiggle, moving gradient hero button, and horizontal categories carousel
+  - [x] **UX Refinements**: Default-hidden filters in listing page for cleaner initial load
+  - [x] **Localization**: Updated stats to reflect 64 districts (Bangladesh-only)
 - [x] **Profile Settings & Product Editing**
   - [x] New `/settings` page with Profile tab for all users
   - [x] Shop tab for artisans (name, bio, story, location, social links, images)
@@ -279,6 +286,6 @@ Users can become artisans through a guided flow:
 - [x] Implement smart search functionality 
 - [x] Add wishlist/favorites feature
 - [x] Profile settings page for users and artisans
+- [x] many pages don't scroll to top on navigation they open from bottom
 - [ ] Reviews and ratings system
 - [ ] populate with 50 products and 10 artisans
-- [ ] many pages don't scroll to top on navigation they open from bottom
