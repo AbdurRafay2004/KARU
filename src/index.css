@@ -95,4 +95,40 @@ h6 {
       background-position: right center;
     }
   }
+
+  .animate-logo-wiggle {
+    animation: logo-wiggle 8s ease-in-out infinite;
+  }
+
+  @keyframes logo-wiggle {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    5% {
+      transform: rotate(15deg);
+    }
+
+    40% {
+      transform: rotate(15deg);
+    }
+
+    /* Long pause clockwise */
+    45% {
+      transform: rotate(-15deg);
+    }
+
+    80% {
+      transform: rotate(-15deg);
+    }
+
+    /* Long pause counter-clockwise */
+    85% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(0deg);
+    }
+  }
 }

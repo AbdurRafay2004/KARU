@@ -26,8 +26,8 @@ export function Header() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
-                    <Link to="/" className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-karu-terracotta rounded-full flex items-center justify-center">
+                    <Link to="/" className="flex items-center gap-2 group">
+                        <div className="w-8 h-8 bg-karu-terracotta rounded-full flex items-center justify-center animate-logo-wiggle">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-white">
                                 <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c1.5 0 3-.3 4.3-.9C14.8 19 12 16 12 12s2.8-7 6.3-9.1C16.9 2.3 14.6 2 12 2z" fill="currentColor" />
                             </svg>
