@@ -13,7 +13,7 @@ export function ProductListingPage() {
     const [searchParams, setSearchParams] = useSearchParams();
     const searchQuery = searchParams.get('search') || '';
 
-    const [showFilters, setShowFilters] = useState(true);
+    const [showFilters, setShowFilters] = useState(false);
     const [sortBy, setSortBy] = useState<SortOption>('newest');
     const [gridSize, setGridSize] = useState<GridSize>(3);
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);

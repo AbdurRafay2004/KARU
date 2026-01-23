@@ -20,13 +20,13 @@ export const HeroSection = () => {
                             <span>Handcrafted with love</span>
                         </div>
 
-                        <h1 className="font-heading text-4xl md:text-5xl lg:text-7xl font-bold leading-tight mb-6 text-karu-charcoal">
+                        <h1 className="font-heading text-4xl md:text-5xl lg:text-7xl font-bold leading-tight mb-2 md:mb-6 text-karu-charcoal">
                             Discover the{" "}
                             <span className="text-gradient">artistry</span>{" "}
                             behind every piece
                         </h1>
 
-                        <p className="text-lg text-karu-stone mb-8 max-w-lg leading-relaxed">
+                        <p className="text-sm md:text-lg text-karu-stone mb-8 max-w-lg leading-relaxed">
                             Connect directly with skilled artisans from around the world.
                             Each piece tells a story of tradition, creativity, and craftsmanship
                             passed down through generations.
