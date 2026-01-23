@@ -33,7 +33,7 @@ export function JoinCommunity() {
                     </div>
 
                     <Link
-                        to="/become-seller"
+                        to="/sell"
                         className="inline-flex items-center justify-center px-6 py-3 bg-white text-karu-charcoal rounded-full font-medium hover:bg-karu-cream transition-colors"
                     >
                         Become a Seller

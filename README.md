@@ -14,6 +14,8 @@
 ✅ **Phase 6 Complete** - Convex Backend Integration
 
 ### Implementation Log
+- [x] **Bug Fixes**
+  - [x] Fixed "Become a Seller" link 404 error
 - [x] **Phase 7: Industry-Grade Architecture**
   - [x] Added `userProfiles` table linking users to roles and artisans
   - [x] Added `userId` field to artisans table for ownership
