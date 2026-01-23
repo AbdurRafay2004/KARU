@@ -1,9 +1,20 @@
+/* Import Premium Typography - MUST BE FIRST */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;900&family=Inter:wght@300;400;500;600;700&family=Anek+Bangla:wght@400;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Base styles */
+/* ============================================
+   KARU PREMIUM DESIGN SYSTEM v2.0
+   Phase 1: Design System Revolution
+   ============================================ */
+
+/* ============================================
+   CSS VARIABLES - Design Tokens
+   ============================================ */
 :root {
+  /* === ORIGINAL EARTH TONES (Preserved) === */
   --karu-cream: #FDF8F3;
   --karu-sand: #E8DDD3;
   --karu-terracotta: #C75D3C;
@@ -11,8 +22,63 @@
   --karu-charcoal: #2D2D2D;
   --karu-stone: #6B6B6B;
   --karu-warm: #F5EDE6;
+
+  /* === NEW: VIBRANT ACCENTS === */
+  --karu-saffron: #FF6B35;
+  /* Bold primary CTA */
+  --karu-amber: #F7931E;
+  /* Highlights & badges */
+  --karu-emerald: #2A9D8F;
+  /* Success states */
+  --karu-indigo: #264653;
+  /* Premium dark backgrounds */
+  --karu-coral: #E88B6A;
+  /* Gradient mid-tone */
+
+  /* === NEW: GRADIENTS === */
+  --gradient-sunset: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #C75D3C 100%);
+  --gradient-earth: linear-gradient(180deg, #8B5A3C 0%, #2D2D2D 100%);
+  --gradient-emerald: linear-gradient(135deg, #2A9D8F 0%, #1D7A6C 100%);
+  --gradient-royal: linear-gradient(135deg, #264653 0%, #2A9D8F 100%);
+
+  /* === NEW: GLASSMORPHISM === */
+  --glass-white: rgba(255, 255, 255, 0.1);
+  --glass-dark: rgba(0, 0, 0, 0.1);
+  --glass-backdrop: blur(10px);
+
+  /* === NEW: SHADOWS (Depth System) === */
+  --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
+  --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.20);
+  --shadow-glow: 0 0 20px rgba(255, 107, 53, 0.3);
+  --shadow-glow-strong: 0 0 40px rgba(255, 107, 53, 0.6);
+
+  /* === NEW: SPACING SYSTEM === */
+  --space-xs: 0.5rem;
+  /* 8px */
+  --space-sm: 1rem;
+  /* 16px */
+  --space-md: 2rem;
+  /* 32px */
+  --space-lg: 4rem;
+  /* 64px */
+  --space-xl: 6rem;
+  /* 96px */
+  --space-2xl: 8rem;
+  /* 128px */
+
+  /* === TYPOGRAPHY SYSTEM === */
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'Inter', sans-serif;
+  --font-bangla: 'Anek Bangla', sans-serif;
+  --font-fallback: 'Epilogue', sans-serif;
 }
 
+/* ============================================
+   BASE STYLES
+   ============================================ */
 * {
   margin: 0;
   padding: 0;
@@ -24,39 +90,131 @@ html {
 }
 
 body {
-  font-family: 'Manrope', sans-serif;
+  font-family: var(--font-body);
   background-color: var(--karu-cream);
   color: var(--karu-charcoal);
-  line-height: 1.6;
+  font-size: clamp(1rem, 1.5vw, 1.125rem);
+  line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1,
-h2,
-h3,
-h4,
+/* ============================================
+   RESPONSIVE TYPOGRAPHY SCALE
+   ============================================ */
+h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+h3 {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+h4 {
+  font-family: var(--font-body);
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
 h5,
 h6 {
-  font-family: 'Epilogue', sans-serif;
+  font-family: var(--font-body);
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.5;
+}
+
+/* Font utility classes */
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+.font-bangla {
+  font-family: var(--font-bangla);
 }
 
 .font-accent {
   font-family: 'Noto Serif', serif;
 }
 
-/* Custom utilities */
+/* ============================================
+   CUSTOM UTILITIES
+   ============================================ */
 @layer utilities {
+
+  /* Text utilities */
   .text-balance {
     text-wrap: balance;
   }
 
+  /* Background gradients */
   .hero-gradient {
     background: radial-gradient(circle at top left, #FDF8F3 0%, #F5EDE6 50%, #E8DDD3 100%);
   }
 
+  .bg-gradient-sunset {
+    background: var(--gradient-sunset);
+  }
+
+  .bg-gradient-earth {
+    background: var(--gradient-earth);
+  }
+
+  .bg-gradient-emerald {
+    background: var(--gradient-emerald);
+  }
+
+  .bg-gradient-royal {
+    background: var(--gradient-royal);
+  }
+
+  /* Text gradients */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-karu-terracotta via-karu-coral to-karu-terracotta;
+    background-size: 200% auto;
+    animation: gradient-x 3s ease infinite;
+  }
+
+  .text-gradient-sunset {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-sunset);
+    background-size: 200% auto;
+    animation: gradient-x 3s ease infinite;
+  }
+
+  /* Glassmorphism */
+  .glass {
+    background: var(--glass-white);
+    backdrop-filter: var(--glass-backdrop);
+    -webkit-backdrop-filter: var(--glass-backdrop);
+  }
+
+  .glass-dark {
+    background: var(--glass-dark);
+    backdrop-filter: var(--glass-backdrop);
+    -webkit-backdrop-filter: var(--glass-backdrop);
+  }
+
+  /* Texture overlay */
   .grain-texture {
     position: relative;
   }
@@ -72,63 +230,247 @@ h6 {
     background-image: url("https://www.transparenttextures.com/patterns/asfalt-dark.png");
   }
 
-  .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-karu-terracotta via-[#E88B6A] to-karu-terracotta;
-    background-size: 200% auto;
-    animation: gradient-x 3s ease infinite;
-  }
-
+  /* Button with animated gradient */
   .btn-gradient-animate {
-    background: linear-gradient(to right, var(--karu-terracotta), #E88B6A, var(--karu-terracotta));
+    background: linear-gradient(to right, var(--karu-terracotta), var(--karu-coral), var(--karu-terracotta));
     background-size: 200% auto;
     animation: gradient-x 3s ease infinite;
   }
 
-  @keyframes gradient-x {
+  .btn-gradient-sunset {
+    background: var(--gradient-sunset);
+    background-size: 200% auto;
+    animation: gradient-x 3s ease infinite;
+  }
+}
 
-    0%,
-    100% {
-      background-position: left center;
-    }
+/* ============================================
+   MICRO-ANIMATION LIBRARY
+   ============================================ */
 
-    50% {
-      background-position: right center;
-    }
+/* Gradient X Animation (existing, enhanced) */
+@keyframes gradient-x {
+
+  0%,
+  100% {
+    background-position: left center;
   }
 
-  .animate-logo-wiggle {
-    animation: logo-wiggle 8s ease-in-out infinite;
+  50% {
+    background-position: right center;
+  }
+}
+
+/* Fade Scale In - Entry animation */
+@keyframes fade-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
   }
 
-  @keyframes logo-wiggle {
-    0% {
-      transform: rotate(0deg);
-    }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 
-    5% {
-      transform: rotate(15deg);
-    }
+/* Slide Up - Content reveal */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
 
-    40% {
-      transform: rotate(15deg);
-    }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-    /* Long pause clockwise */
-    45% {
-      transform: rotate(-15deg);
-    }
+/* Slide Down */
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
 
-    80% {
-      transform: rotate(-15deg);
-    }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-    /* Long pause counter-clockwise */
-    85% {
-      transform: rotate(0deg);
-    }
+/* Glow Pulse - Premium emphasis */
+@keyframes glow-pulse {
 
-    100% {
-      transform: rotate(0deg);
-    }
+  0%,
+  100% {
+    box-shadow: var(--shadow-glow);
+  }
+
+  50% {
+    box-shadow: var(--shadow-glow-strong);
+  }
+}
+
+/* Shimmer - Loading states */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* Float - Subtle hover effect */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Logo Wiggle (existing, preserved) */
+@keyframes logo-wiggle {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  5% {
+    transform: rotate(15deg);
+  }
+
+  40% {
+    transform: rotate(15deg);
+  }
+
+  45% {
+    transform: rotate(-15deg);
+  }
+
+  80% {
+    transform: rotate(-15deg);
+  }
+
+  85% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+/* Bounce In - Playful entrance */
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  70% {
+    transform: scale(0.9);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Ripple - Click feedback */
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* ============================================
+   ANIMATION UTILITY CLASSES
+   ============================================ */
+.animate-fade-in {
+  animation: fade-scale-in 0.5s ease-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.6s ease-out;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.6s ease-out;
+}
+
+.animate-glow {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-logo-wiggle {
+  animation: logo-wiggle 8s ease-in-out infinite;
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Shimmer effect for skeleton loaders */
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Animation delays for staggered effects */
+.animation-delay-100 {
+  animation-delay: 100ms;
+}
+
+.animation-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animation-delay-300 {
+  animation-delay: 300ms;
+}
+
+.animation-delay-400 {
+  animation-delay: 400ms;
+}
+
+.animation-delay-500 {
+  animation-delay: 500ms;
+}
+
+/* ============================================
+   PERFORMANCE OPTIMIZATION
+   ============================================ */
+.will-animate {
+  will-change: transform, opacity;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

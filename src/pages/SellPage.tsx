@@ -58,7 +58,7 @@ export function SellPage() {
                     <Authenticated>
                         <Link
                             to="/onboarding"
-                            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-karu-terracotta rounded-full font-semibold text-lg hover:bg-karu-cream transition-colors shadow-lg"
+                            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-sunset text-white rounded-full font-semibold text-lg hover:scale-105 hover:shadow-xl transition-all shadow-lg"
                         >
                             Start Selling Today
                             <ArrowRight className="w-5 h-5" />
@@ -68,7 +68,7 @@ export function SellPage() {
                     <Unauthenticated>
                         <Link
                             to="/signup"
-                            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-karu-terracotta rounded-full font-semibold text-lg hover:bg-karu-cream transition-colors shadow-lg"
+                            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-sunset text-white rounded-full font-semibold text-lg hover:scale-105 hover:shadow-xl transition-all shadow-lg"
                         >
                             Create Account to Start
                             <ArrowRight className="w-5 h-5" />
@@ -169,7 +169,7 @@ export function SellPage() {
                     <Authenticated>
                         <Link
                             to="/onboarding"
-                            className="inline-flex items-center gap-2 px-8 py-4 bg-karu-terracotta text-white rounded-full font-semibold text-lg hover:bg-karu-clay transition-colors"
+                            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-sunset text-white rounded-full font-semibold text-lg hover:scale-105 hover:shadow-glow-strong transition-all shadow-glow animate-glow"
                         >
                             Start Your Shop
                             <ArrowRight className="w-5 h-5" />
@@ -179,7 +179,7 @@ export function SellPage() {
                     <Unauthenticated>
                         <Link
                             to="/signup"
-                            className="inline-flex items-center gap-2 px-8 py-4 bg-karu-terracotta text-white rounded-full font-semibold text-lg hover:bg-karu-clay transition-colors"
+                            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-sunset text-white rounded-full font-semibold text-lg hover:scale-105 hover:shadow-glow-strong transition-all shadow-glow animate-glow"
                         >
                             Get Started
                             <ArrowRight className="w-5 h-5" />

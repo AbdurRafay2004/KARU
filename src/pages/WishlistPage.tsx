@@ -141,7 +141,7 @@ export function WishlistPage() {
                                 <button
                                     onClick={() => handleAddToCart(product._id)}
                                     disabled={addingToCart === product._id}
-                                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-karu-charcoal text-white text-sm rounded-karu hover:bg-karu-charcoal/90 transition-colors disabled:opacity-50"
+                                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-gradient-emerald text-white text-sm rounded-karu hover:scale-105 hover:shadow-lg transition-all shadow-md disabled:opacity-50 disabled:hover:scale-100"
                                 >
                                     <ShoppingBag className="w-4 h-4" />
                                     {addingToCart === product._id ? 'Adding...' : 'Add to Cart'}

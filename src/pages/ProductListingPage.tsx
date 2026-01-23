@@ -3,6 +3,7 @@ import { useQuery } from 'convex/react';
 import { useSearchParams } from 'react-router-dom';
 import { api } from '../../convex/_generated/api';
 import { ProductCard } from '../components/product/ProductCard';
+import { ProductCardSkeleton } from '../components/product/ProductCardSkeleton';
 import { FilterSidebar } from '../components/product/FilterSidebar.tsx';
 import { SlidersHorizontal, Grid3x3, LayoutGrid, X } from 'lucide-react';
 
@@ -73,13 +74,23 @@ export function ProductListingPage() {
         setSearchParams(newParams);
     };
 
-    // Loading state
+    // Loading state with skeleton screens
     if (products === undefined) {
         return (
-            <div className="min-h-screen bg-karu-cream flex items-center justify-center">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-karu-terracotta mx-auto mb-4"></div>
-                    <p className="text-karu-stone">Loading products...</p>
+            <div className="min-h-screen bg-karu-cream">
+                <div className="bg-white border-b border-karu-sand">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                        <div className="h-10 bg-gray-200 rounded shimmer w-96 mb-2"></div>
+                        <div className="h-5 bg-gray-200 rounded shimmer w-64"></div>
+                    </div>
+                </div>
+
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <div className="grid gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                        {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                            <ProductCardSkeleton key={i} />
+                        ))}
+                    </div>
                 </div>
             </div>
         );

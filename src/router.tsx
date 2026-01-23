@@ -15,6 +15,7 @@ import { SellPage } from './pages/SellPage';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { WishlistPage } from './pages/WishlistPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { DesignSystemShowcase } from './components/DesignSystemShowcase';
 import {
     MarketplacePage,
     StoryPage,
@@ -93,6 +94,11 @@ export const router = createBrowserRouter([
     {
         path: '/settings',
         element: <Layout><SettingsPage /></Layout>,
+    },
+    // Design System Showcase (temporary - for testing Phase 1)
+    {
+        path: '/design-system',
+        element: <DesignSystemShowcase />,
     },
     // Footer placeholder pages
     {

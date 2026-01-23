@@ -20,6 +20,7 @@ export function WishlistButton({
 }: WishlistButtonProps) {
     const navigate = useNavigate();
     const [isProcessing, setIsProcessing] = useState(false);
+    const [isAnimating, setIsAnimating] = useState(false);
 
     const currentUser = useQuery(api.users.getCurrentUser);
     const isInWishlist = useQuery(
@@ -43,6 +44,10 @@ export function WishlistButton({
             navigate('/login');
             return;
         }
+
+        // Trigger animation
+        setIsAnimating(true);
+        setTimeout(() => setIsAnimating(false), 300);
 
         setIsProcessing(true);
         try {
@@ -72,7 +77,8 @@ export function WishlistButton({
             aria-label={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
         >
             <Heart
-                className={`${sizeClasses[size]} transition-all`}
+                className={`${sizeClasses[size]} transition-all duration-300 ${isAnimating ? 'scale-150' : 'scale-100'
+                    }`}
                 fill={isInWishlist ? 'currentColor' : 'none'}
                 strokeWidth={2}
             />
