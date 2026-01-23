@@ -3,6 +3,7 @@
 > A premium handicraft marketplace connecting artisans with conscious buyers. Available all over Bangladesh, not globally.
 
 ## Current Status
+✅ **Resilient AI Assistant** - Model fallback system with 5 Gemini models for high availability
 ✅ **Product-Aware AI Assistant** - Gemini chatbot now queries live product database for intelligent recommendations
 ✅ **Premium UI/UX Complete** - Mobile-responsive design with smooth animations and cultural elements
 ✅ **Design & UX Polished** - Scroll restoration, mobile responsiveness, and premium animations
@@ -20,7 +21,13 @@
 ✅ **Phase 6 Complete** - Convex Backend Integration
 
 ### Implementation Log
-- [x] **Product-Aware AI (Latest)**
+- [x] **Resilient AI System (Latest)**
+  - [x] **Model Fallback Chain**: 5-tier fallback system prioritizing speed (flash-lite → flash → preview models)
+  - [x] **Error Handling**: Automatic retry on 404/429/503 errors (rate limits, overload, unavailability)
+  - [x] **Performance Optimization**: Prioritizes fastest models (gemini-2.5-flash-lite, gemini-2.0-flash-lite)
+  - [x] **Logging**: Detailed attempt/success logs for monitoring which model succeeded
+  - [x] **Smart Retry Logic**: Skips non-retryable errors, continues to next model on transient failures
+- [x] **Product-Aware AI**
   - [x] **Intelligent Intent Analysis**: AI detects product queries, categories, price ranges, and materials
   - [x] **Database Integration**: Queries Convex for products and artisans based on user questions
   - [x] **Dynamic Context Injection**: Injects live product data into Gemini's system prompt
@@ -51,13 +58,14 @@
   - [x] Fixed "Become a Seller" link 404 error
 - [x] **Phase 8: AI Experience (Gemini Integration)**
   - [x] Floating Action Chat Button with animations
-  - [x] **Gemini 2.5 Flash Lite** integration via `@google/genai` SDK
-  - [x] `convex/gemini.ts` - Enhanced with product database queries and dynamic context
+  - [x] **Model Fallback System** - 5-tier chain prioritizing speed and reliability
+  - [x] **Gemini Models**: flash-lite (primary) → flash → preview models (fallback)
+  - [x] `convex/gemini.ts` - Enhanced with product database queries, dynamic context, and fallback logic
   - [x] `convex/ai/helpers.ts` - Intent analysis and context-building utilities
   - [x] Product-aware responses: searches by category, price, material, artisan
   - [x] `GEMINI_API_KEY` stored in Convex environment variables
   - [x] Product-focused suggested questions (pottery, jewelry, price queries)
-  - [x] Error handling with graceful fallback messages
+  - [x] Error handling with automatic model fallback on rate limits/overload
   - [x] Workflow guide created at `.agent/workflows/gemini-convex-integration.md`
 - [x] **Image URL Support**
   - [x] Artisan avatar & cover URL inputs in onboarding
@@ -154,6 +162,7 @@ For production (Vercel), ensure the following are set:
 - **Routing**: React Router DOM
 - **Backend**: Convex (real-time database)
 - **Auth**: @convex-dev/auth
+- **AI**: Google Gemini API (@google/genai) with 5-model fallback chain
 
 ## Project Structure
 ```
@@ -173,7 +182,10 @@ convex/
 ├── artisans.ts         # Artisan queries
 ├── categories.ts       # Category queries
 ├── orders.ts           # Order mutations and queries
-└── admin.ts            # Secured artisan dashboard (RBAC)
+├── admin.ts            # Secured artisan dashboard (RBAC)
+├── gemini.ts           # Gemini AI integration with model fallback
+└── ai/
+    └── helpers.ts      # Intent analysis and context-building utilities
 ```
 
 ## Routing Architecture
