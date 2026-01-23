@@ -30,7 +30,11 @@ export default defineSchema({
     }).index("by_artisan", ["artisanId", "price"])
         .index("by_category", ["category", "price"])
         .index("by_trending", ["isTrending"])
-        .index("by_price", ["price"]),
+        .index("by_price", ["price"])
+        .searchIndex("search_body", {
+            searchField: "name",
+            filterFields: ["category", "artisanId"],
+        }),
 
     // Artisans table
     artisans: defineTable({

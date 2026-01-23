@@ -1,15 +1,25 @@
+import { useState, type FormEvent } from 'react';
 import { Search, ShoppingBag, Heart, User, Store } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 import { Authenticated, Unauthenticated } from 'convex/react';
 import { UserMenu } from './UserMenu';
 
 export function Header() {
+    const navigate = useNavigate();
     const currentUser = useQuery(api.users.getCurrentUser);
     const cartCount = useQuery(api.users.getCartCount);
+    const [searchQuery, setSearchQuery] = useState('');
 
     const isArtisan = !!currentUser?.profile?.artisanId;
+
+    const handleSearch = (e: FormEvent) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+        }
+    };
 
     return (
         <header className="bg-white border-b border-karu-sand sticky top-0 z-50">
@@ -27,14 +37,18 @@ export function Header() {
 
                     {/* Search Bar */}
                     <div className="hidden md:flex flex-1 max-w-md mx-8">
-                        <div className="relative w-full">
+                        <form onSubmit={handleSearch} className="relative w-full">
                             <input
                                 type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Find unique handcrafted items..."
                                 className="w-full pl-10 pr-4 py-2 bg-karu-cream border border-karu-sand rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-karu-terracotta/20 focus:border-karu-terracotta"
                             />
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-karu-stone" />
-                        </div>
+                            <button type="submit" className="absolute left-3 top-1/2 -translate-y-1/2">
+                                <Search className="w-4 h-4 text-karu-stone hover:text-karu-terracotta transition-colors" />
+                            </button>
+                        </form>
                     </div>
 
                     {/* Right Actions */}

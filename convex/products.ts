@@ -142,3 +142,32 @@ export const trending = query({
         return enrichedProducts;
     },
 });
+
+// Search products
+export const search = query({
+    args: { query: v.string() },
+    handler: async (ctx, args) => {
+        const products = await ctx.db
+            .query("products")
+            .withSearchIndex("search_body", (q) => q.search("name", args.query))
+            .take(20);
+
+        // Enrich with artisan data
+        const artisanIds = [...new Set(products.map((p) => p.artisanId))];
+        const artisans = await Promise.all(artisanIds.map((id) => ctx.db.get(id)));
+        const artisansMap = new Map();
+        artisanIds.forEach((id, index) => {
+            artisansMap.set(id, artisans[index]);
+        });
+
+        const enrichedProducts = products.map((product) => {
+            const artisan = artisansMap.get(product.artisanId);
+            return {
+                ...product,
+                artisan: artisan ? { name: artisan.name, slug: artisan.slug } : null,
+            };
+        });
+
+        return enrichedProducts;
+    },
+});

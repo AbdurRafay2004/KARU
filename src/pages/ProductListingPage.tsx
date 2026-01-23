@@ -1,14 +1,18 @@
 import { useState, useMemo } from 'react';
 import { useQuery } from 'convex/react';
+import { useSearchParams } from 'react-router-dom';
 import { api } from '../../convex/_generated/api';
 import { ProductCard } from '../components/product/ProductCard';
 import { FilterSidebar } from '../components/product/FilterSidebar.tsx';
-import { SlidersHorizontal, Grid3x3, LayoutGrid } from 'lucide-react';
+import { SlidersHorizontal, Grid3x3, LayoutGrid, X } from 'lucide-react';
 
 export type SortOption = 'newest' | 'price-low' | 'price-high' | 'popular';
 export type GridSize = 3 | 4;
 
 export function ProductListingPage() {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const searchQuery = searchParams.get('search') || '';
+
     const [showFilters, setShowFilters] = useState(true);
     const [sortBy, setSortBy] = useState<SortOption>('newest');
     const [gridSize, setGridSize] = useState<GridSize>(3);
@@ -16,11 +20,16 @@ export function ProductListingPage() {
     const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
     const [selectedArtisans, setSelectedArtisans] = useState<string[]>([]);
 
-    // Fetch products from Convex
-    const products = useQuery(api.products.list, {
+    // Determine which query to run
+    const productsList = useQuery(api.products.list, {
         minPrice: priceRange[0],
         maxPrice: priceRange[1],
     });
+
+    const searchResults = useQuery(api.products.search, searchQuery ? { query: searchQuery } : "skip");
+
+    // Use search results if query exists, updates automatically when query changes
+    const products = searchQuery ? searchResults : productsList;
 
     // Filter and sort products
     const filteredProducts = useMemo(() => {
@@ -32,6 +41,11 @@ export function ProductListingPage() {
                 (product.artisan && selectedArtisans.includes(product.artisan.name));
             return categoryMatch && artisanMatch;
         });
+
+        // Search results don't support price filtering at database level yet, so client-side filter if search is active
+        if (searchQuery) {
+            filtered = filtered.filter(p => p.price >= priceRange[0] && p.price <= priceRange[1]);
+        }
 
         // Sort products
         filtered.sort((a, b) => {
@@ -50,7 +64,14 @@ export function ProductListingPage() {
         });
 
         return filtered;
-    }, [products, selectedCategories, selectedArtisans, sortBy]);
+    }, [products, selectedCategories, selectedArtisans, sortBy, searchQuery, priceRange]);
+
+    // Clear search
+    const clearSearch = () => {
+        const newParams = new URLSearchParams(searchParams);
+        newParams.delete('search');
+        setSearchParams(newParams);
+    };
 
     // Loading state
     if (products === undefined) {
@@ -69,12 +90,36 @@ export function ProductListingPage() {
             {/* Page Header */}
             <div className="bg-white border-b border-karu-sand">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                    <h1 className="font-heading text-4xl font-bold text-karu-charcoal mb-2">
-                        Discover Handcrafted Treasures
-                    </h1>
-                    <p className="text-karu-stone">
-                        Explore {filteredProducts.length} unique pieces from talented artisans across Bangladesh
-                    </p>
+                    {searchQuery ? (
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <div className="flex items-center gap-3 mb-2">
+                                    <h1 className="font-heading text-4xl font-bold text-karu-charcoal">
+                                        Search Results: "{searchQuery}"
+                                    </h1>
+                                    <button
+                                        onClick={clearSearch}
+                                        className="p-1 hover:bg-karu-sand rounded-full transition-colors"
+                                        title="Clear search"
+                                    >
+                                        <X className="w-6 h-6 text-karu-stone" />
+                                    </button>
+                                </div>
+                                <p className="text-karu-stone">
+                                    Found {filteredProducts.length} items matching your search
+                                </p>
+                            </div>
+                        </div>
+                    ) : (
+                        <>
+                            <h1 className="font-heading text-4xl font-bold text-karu-charcoal mb-2">
+                                Discover Handcrafted Treasures
+                            </h1>
+                            <p className="text-karu-stone">
+                                Explore {filteredProducts.length} unique pieces from talented artisans across Bangladesh
+                            </p>
+                        </>
+                    )}
                 </div>
             </div>
 
