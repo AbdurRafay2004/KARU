@@ -24,20 +24,20 @@ export function CategorySection() {
                     </Link>
                 </div>
 
-                {/* Category Grid */}
+                {/* Category Carousel */}
                 {categories === undefined ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+                    <div className="flex gap-4 md:gap-6 overflow-x-hidden">
                         {[1, 2, 3].map((i) => (
-                            <div key={i} className="animate-pulse aspect-[4/3] bg-karu-sand rounded-karu-lg"></div>
+                            <div key={i} className="flex-shrink-0 w-[85vw] sm:w-[350px] aspect-[4/3] bg-karu-sand rounded-karu-lg animate-pulse"></div>
                         ))}
                     </div>
                 ) : categories.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+                    <div className="flex gap-4 md:gap-6 overflow-x-auto snap-x snap-mandatory pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
                         {categories.map((category) => (
                             <Link
                                 key={category._id}
                                 to={`/products?category=${category.slug}`}
-                                className="group relative aspect-[4/3] rounded-karu-lg overflow-hidden"
+                                className="flex-shrink-0 w-[85vw] sm:w-[350px] snap-center group relative aspect-[4/3] rounded-karu-lg overflow-hidden"
                             >
                                 <img
                                     src={category.image}
