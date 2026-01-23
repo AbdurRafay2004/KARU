@@ -26,7 +26,7 @@ export const HeroSection = () => {
                             behind every piece
                         </h1>
 
-                        <p className="text-sm md:text-lg text-karu-stone mb-8 max-w-lg leading-relaxed">
+                        <p className="hidden md:block text-lg text-karu-stone mb-8 max-w-lg leading-relaxed">
                             Connect directly with skilled artisans from around the world.
                             Each piece tells a story of tradition, creativity, and craftsmanship
                             passed down through generations.
