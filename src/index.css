@@ -78,6 +78,12 @@ h6 {
     animation: gradient-x 3s ease infinite;
   }
 
+  .btn-gradient-animate {
+    background: linear-gradient(to right, var(--karu-terracotta), #E88B6A, var(--karu-terracotta));
+    background-size: 200% auto;
+    animation: gradient-x 3s ease infinite;
+  }
+
   @keyframes gradient-x {
 
     0%,
