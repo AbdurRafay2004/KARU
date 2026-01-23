@@ -3,7 +3,7 @@
 > A premium handicraft marketplace connecting artisans with conscious buyers. Available all over Bangladesh, not globally.
 
 ## Current Status
-✅ **Gemini AI Chatbot** - Floating chat assistant now powered by Gemini 2.5 Flash Lite
+✅ **Gemini AI Chatbot** - Floating chat assistant now powered by Gemini 2.5 Flash Lite via SDK
 ✅ **Premium UI/UX Complete** - Mobile-responsive design with smooth animations and cultural elements
 ✅ **Design & UX Polished** - Scroll restoration, mobile responsiveness, and premium animations
 ✅ **Shop Manager Enhanced** - Customer names displayed in Orders tab
@@ -13,11 +13,6 @@
 ✅ **Phase 8 Complete** - AI Chat Assistant (Gemini Integration)
 ✅ **Phase 7 Complete** - Industry-Grade Architecture (Schema Migration & Authorization)
 ✅ **Phase E Complete** - Checkout, Orders & Admin Dashboard
-✅ **Phase D Complete** - Vercel Deployment & Environment Fix
-✅ **Phase C Complete** - User Authentication & Cart
-✅ **Phase B Complete** - Homepage Integration
-✅ **Phase A Complete** - Page-to-Page Linking Fixed
-✅ **Phase 6 Complete** - Convex Backend Integration
 ✅ **Phase D Complete** - Vercel Deployment & Environment Fix
 ✅ **Phase C Complete** - User Authentication & Cart
 ✅ **Phase B Complete** - Homepage Integration
@@ -46,13 +41,14 @@
   - [x] `updateArtisanProfile` mutation for artisan shop details
 - [x] **Bug Fixes**
   - [x] Fixed "Become a Seller" link 404 error
-- [x] **Phase 8: AI Experience**
+- [x] **Phase 8: AI Experience (Gemini Integration)**
   - [x] Floating Action Chat Button with animations
-  - [x] **Gemini 2.5 Flash Lite** integration via Convex action
-  - [x] `convex/gemini.ts` - REST API call to Gemini with KARU context
+  - [x] **Gemini 2.5 Flash Lite** integration via `@google/genai` SDK
+  - [x] `convex/gemini.ts` - Convex action using GoogleGenAI SDK with KARU context
   - [x] `GEMINI_API_KEY` stored in Convex environment variables
-  - [x] Suggested Questions chips
+  - [x] Suggested Questions chips for quick interactions
   - [x] Error handling with fallback messages
+  - [x] Workflow guide created at `.agent/workflows/gemini-convex-integration.md`
 - [x] **Image URL Support**
   - [x] Artisan avatar & cover URL inputs in onboarding
   - [x] Live image previews
