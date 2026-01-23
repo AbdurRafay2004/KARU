@@ -131,8 +131,8 @@ export function ChatWidget() {
                                 <div
                                     key={msg.id}
                                     className={`max-w-[80%] p-3 rounded-2xl text-sm ${msg.sender === 'user'
-                                            ? 'bg-stone-900 text-white self-end rounded-br-none'
-                                            : 'bg-white text-stone-800 shadow-sm border border-stone-100 self-start rounded-bl-none'
+                                        ? 'bg-stone-900 text-white self-end rounded-br-none'
+                                        : 'bg-white text-stone-800 shadow-sm border border-stone-100 self-start rounded-bl-none'
                                         }`}
                                 >
                                     {msg.text}
@@ -188,9 +188,26 @@ export function ChatWidget() {
                 )}
             </AnimatePresence>
 
-            <button
+            <motion.button
                 onClick={() => setIsOpen(!isOpen)}
-                className="bg-stone-900 text-white p-4 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 relative group"
+                animate={{
+                    y: [0, -5, 0],
+                }}
+                transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                }}
+                className="relative text-white p-5 shadow-lg hover:shadow-xl transition-shadow duration-300"
+                style={{
+                    background: 'linear-gradient(to bottom right, #E88B6A 0%, #C75D3C 100%)',
+                    borderRadius: '65% 35% 45% 55% / 55% 45% 55% 45%',
+                    width: '70px',
+                    height: '70px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}
             >
                 {isOpen ? (
                     <X size={24} />
@@ -198,12 +215,12 @@ export function ChatWidget() {
                     <MessageCircle size={24} />
                 )}
                 {!isOpen && (
-                    <span className="absolute right-0 top-0 flex h-3 w-3">
+                    <span className="absolute right-0 top-1 flex h-3 w-3">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
                     </span>
                 )}
-            </button>
+            </motion.button>
         </div>
     );
 }
