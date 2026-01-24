@@ -16,26 +16,33 @@ export const getWishlist = query({
 
         if (!wishlist) return { productIds: [], products: [] };
 
-        // Enrich with product details and artisan info
-        const products = await Promise.all(
-            wishlist.productIds.map(async (productId) => {
-                const product = await ctx.db.get(productId);
-                if (!product) return null;
-
-                const artisan = await ctx.db.get(product.artisanId);
-                return {
-                    ...product,
-                    artisan,
-                };
-            })
+        // Enrich with product details
+        const fetchedProducts = await Promise.all(
+            wishlist.productIds.map((productId) => ctx.db.get(productId))
         );
 
         // Filter out any null products (deleted items)
-        const validProducts = products.filter((p) => p !== null);
+        const validProducts = fetchedProducts.filter((p) => p !== null);
+
+        // Enrich with artisan info
+        const artisanIds = [...new Set(validProducts.map((p) => p.artisanId))];
+        const artisans = await Promise.all(artisanIds.map((id) => ctx.db.get(id)));
+        const artisansMap = new Map();
+        artisanIds.forEach((id, index) => {
+            artisansMap.set(id, artisans[index]);
+        });
+
+        const products = validProducts.map((product) => {
+            const artisan = artisansMap.get(product.artisanId);
+            return {
+                ...product,
+                artisan,
+            };
+        });
 
         return {
             productIds: wishlist.productIds,
-            products: validProducts,
+            products,
         };
     },
 });
