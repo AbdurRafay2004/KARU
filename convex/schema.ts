@@ -28,6 +28,7 @@ export default defineSchema({
         dimensions: v.optional(v.string()),
         weight: v.optional(v.string()),
     }).index("by_artisan", ["artisanId", "price"])
+        .index("by_artisan_category", ["artisanId", "category", "price"])
         .index("by_category", ["category", "price"])
         .index("by_trending", ["isTrending"])
         .index("by_price", ["price"])
