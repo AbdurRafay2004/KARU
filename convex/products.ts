@@ -67,12 +67,7 @@ export const list = query({
         const products = await productsQuery.collect();
 
         // Enrich with artisan data
-        const artisanIds = [...new Set(products.map((p) => p.artisanId))];
-        const artisans = await Promise.all(artisanIds.map((id) => ctx.db.get(id)));
-        const artisansMap = new Map();
-        artisanIds.forEach((id, index) => {
-            artisansMap.set(id, artisans[index]);
-        });
+        const artisansMap = await getArtisansMap(ctx, products);
 
         const enrichedProducts = products.map((product) => {
             const artisan = artisansMap.get(product.artisanId);
@@ -124,12 +119,7 @@ export const trending = query({
             .collect();
 
         // Enrich with artisan data
-        const artisanIds = [...new Set(products.map((p) => p.artisanId))];
-        const artisans = await Promise.all(artisanIds.map((id) => ctx.db.get(id)));
-        const artisansMap = new Map();
-        artisanIds.forEach((id, index) => {
-            artisansMap.set(id, artisans[index]);
-        });
+        const artisansMap = await getArtisansMap(ctx, products);
 
         const enrichedProducts = products.map((product) => {
             const artisan = artisansMap.get(product.artisanId);
@@ -153,12 +143,7 @@ export const search = query({
             .take(20);
 
         // Enrich with artisan data
-        const artisanIds = [...new Set(products.map((p) => p.artisanId))];
-        const artisans = await Promise.all(artisanIds.map((id) => ctx.db.get(id)));
-        const artisansMap = new Map();
-        artisanIds.forEach((id, index) => {
-            artisansMap.set(id, artisans[index]);
-        });
+        const artisansMap = await getArtisansMap(ctx, products);
 
         const enrichedProducts = products.map((product) => {
             const artisan = artisansMap.get(product.artisanId);
@@ -171,3 +156,15 @@ export const search = query({
         return enrichedProducts;
     },
 });
+
+// Helper to batch fetch artisans
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function getArtisansMap(ctx: any, products: any[]) {
+    const artisanIds = [...new Set(products.map((p) => p.artisanId))];
+    const artisans = await Promise.all(artisanIds.map((id) => ctx.db.get(id)));
+    const artisansMap = new Map();
+    artisanIds.forEach((id, index) => {
+        artisansMap.set(id, artisans[index]);
+    });
+    return artisansMap;
+}

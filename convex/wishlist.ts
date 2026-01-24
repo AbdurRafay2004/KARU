@@ -1,6 +1,7 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { auth } from "./auth";
+import { getArtisansMap } from "./products";
 
 // Get user's wishlist with enriched product details
 export const getWishlist = query({
@@ -17,21 +18,20 @@ export const getWishlist = query({
         if (!wishlist) return { productIds: [], products: [] };
 
         // Enrich with product details and artisan info
-        const products = await Promise.all(
-            wishlist.productIds.map(async (productId) => {
-                const product = await ctx.db.get(productId);
-                if (!product) return null;
-
-                const artisan = await ctx.db.get(product.artisanId);
-                return {
-                    ...product,
-                    artisan,
-                };
-            })
+        const productsRaw = await Promise.all(
+            wishlist.productIds.map((id) => ctx.db.get(id))
         );
+        const products = productsRaw.filter((p) => p !== null);
 
-        // Filter out any null products (deleted items)
-        const validProducts = products.filter((p) => p !== null);
+        const artisansMap = await getArtisansMap(ctx, products);
+
+        const validProducts = products.map((product) => {
+            const artisan = artisansMap.get(product.artisanId);
+            return {
+                ...product,
+                artisan: artisan ?? null,
+            };
+        });
 
         return {
             productIds: wishlist.productIds,
