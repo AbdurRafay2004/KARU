@@ -21,6 +21,7 @@
     - [x] **Send Button**: Unified terracotta background
     - [x] **Floating Button**: Sunset gradient (`#E88B6A` → `#C75D3C`) with matching ping animation
   - [x] **Categories Expanded**: Added "Bags" and "Mats & Rugs" with relevant product re-categorization
+  - [x] **UX Polished**: "Load More" button in Trending Section now redirects to full Marketplace
 - [x] **Phase 1: UI/UX Transformation - Design System Revolution**
   - [x] **Vibrant Color Palette**: Added saffron (#FF6B35), amber (#F7931E), emerald (#2A9D8F), indigo (#264653), coral (#E88B6A)
   - [x] **Premium Gradients**: Sunset, earth, emerald, and royal gradient variables

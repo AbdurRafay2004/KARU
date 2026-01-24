@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 import { ProductCard } from '../product/ProductCard';
@@ -122,11 +123,14 @@ export function TrendingSection() {
                     )}
                 </div>
 
-                {/* Load More */}
+                {/* View All Products Button */}
                 <div className="mt-10 text-center">
-                    <button className="inline-flex items-center justify-center px-6 py-3 border border-karu-charcoal text-karu-charcoal rounded-full font-medium hover:bg-karu-charcoal hover:text-white transition-colors">
-                        Load More Products
-                    </button>
+                    <Link
+                        to="/products"
+                        className="inline-flex items-center justify-center px-8 py-4 bg-white border-2 border-karu-charcoal text-karu-charcoal rounded-full font-bold hover:bg-karu-charcoal hover:text-white transition-all transform hover:scale-105 active:scale-95 shadow-md hover:shadow-xl"
+                    >
+                        View All Products
+                    </Link>
                 </div>
             </div>
         </section>
