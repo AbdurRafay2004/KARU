@@ -99,7 +99,7 @@ export const HeroSection = () => {
                             <div className="space-y-4 pt-12">
                                 <div className="rounded-3xl overflow-hidden aspect-square shadow-lg hover:shadow-2xl transition-shadow duration-500">
                                     <img
-                                        src="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?w=300&h=300&fit=crop"
+                                        src="https://scontent.fdac142-1.fna.fbcdn.net/v/t39.30808-6/594453355_122107478325135589_2553278613010234397_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=127cfc&_nc_ohc=JRf5iC7KoiwQ7kNvwFPz5Yo&_nc_oc=AdntbrxLXibHQLKBJlRBBPxbasWKbA8QfsxK-fdyq1hg3XTxno8Xx9YaTGNM1nlx87w&_nc_zt=23&_nc_ht=scontent.fdac142-1.fna&_nc_gid=bhRJD5in20SJWczCAkCeIg&oh=00_Afqb4XZ3YKogdAX_llRHgcQeV7GjAYYhm0c8jNGiR_1y2A&oe=6979EA18"
                                         alt="Handmade jewelry"
                                         className="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 hover:scale-105 transition-all duration-700"
                                     />
@@ -122,8 +122,10 @@ export const HeroSection = () => {
             </div>
 
             {/* Scroll Indicator */}
-            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 animate-bounce z-20">
-                <ChevronDown className="w-8 h-8 text-karu-stone opacity-60 hover:opacity-100 transition-opacity" />
+            <div className="absolute bottom-12 inset-x-0 flex justify-center z-20 pointer-events-none">
+                <div className="animate-bounce pointer-events-auto">
+                    <ChevronDown className="w-8 h-8 text-karu-stone opacity-60 hover:opacity-100 transition-opacity" />
+                </div>
             </div>
         </section>
     );

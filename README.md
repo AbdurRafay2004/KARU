@@ -20,6 +20,7 @@
     - [x] **User Bubbles**: Terracotta (`#C75D3C`) to match primary CTA buttons
     - [x] **Send Button**: Unified terracotta background
     - [x] **Floating Button**: Sunset gradient (`#E88B6A` → `#C75D3C`) with matching ping animation
+  - [x] **Categories Expanded**: Added "Bags" and "Mats & Rugs" with relevant product re-categorization
 - [x] **Phase 1: UI/UX Transformation - Design System Revolution**
   - [x] **Vibrant Color Palette**: Added saffron (#FF6B35), amber (#F7931E), emerald (#2A9D8F), indigo (#264653), coral (#E88B6A)
   - [x] **Premium Gradients**: Sunset, earth, emerald, and royal gradient variables
@@ -106,6 +107,7 @@
   - [x] `updateArtisanProfile` mutation for artisan shop details
 - [x] **Bug Fixes**
   - [x] Fixed "Become a Seller" link 404 error
+  - [x] Fixed mobile arrow alignment in Hero section
 - [x] **Phase 8: AI Experience (Gemini Integration)**
   - [x] Floating Action Chat Button with animations
   - [x] **Model Fallback System** - 5-tier chain prioritizing speed and reliability
@@ -368,6 +370,6 @@ Users can become artisans through a guided flow:
 ---
 
 - [ ] Reviews and ratings system
-- [ ] Populate with 50 products and 10 artisans
+- [x] Populate with 50 products and 10 artisans
 - [ ] Implement "Buy Now" (direct checkout) feature
 - [ ] Add "Related Products" section on Product Detail Page

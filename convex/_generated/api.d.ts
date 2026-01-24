@@ -13,6 +13,7 @@ import type * as ai_helpers from "../ai/helpers.js";
 import type * as artisans from "../artisans.js";
 import type * as auth from "../auth.js";
 import type * as categories from "../categories.js";
+import type * as clear from "../clear.js";
 import type * as gemini from "../gemini.js";
 import type * as http from "../http.js";
 import type * as orders from "../orders.js";
@@ -34,6 +35,7 @@ declare const fullApi: ApiFromModules<{
   artisans: typeof artisans;
   auth: typeof auth;
   categories: typeof categories;
+  clear: typeof clear;
   gemini: typeof gemini;
   http: typeof http;
   orders: typeof orders;

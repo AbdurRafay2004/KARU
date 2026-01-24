@@ -9,7 +9,7 @@ interface FilterSidebarProps {
     setSelectedArtisans: (artisans: string[]) => void;
 }
 
-const CATEGORIES = ['Home Decor', 'Jewelry', 'Textiles', 'Pottery', 'Woodwork'];
+const CATEGORIES = ['Home Decor', 'Jewelry', 'Textiles', 'Pottery', 'Woodwork', 'Bags', 'Mats & Rugs'];
 const ARTISANS = ['Elena Rossi', 'Maria Santos', 'Aisha Khan', 'James Chen', 'Fatima Ahmed'];
 
 export function FilterSidebar({
