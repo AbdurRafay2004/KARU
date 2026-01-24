@@ -155,7 +155,7 @@ export function ChatWidget() {
                         className="mb-4 w-[350px] max-w-[calc(100vw-48px)] bg-white rounded-2xl shadow-xl overflow-hidden border border-[#E88B6A]/20"
                     >
                         {/* Header */}
-                        <div className="bg-gradient-to-r from-karu-terracotta via-karu-coral to-[#E88B6A] text-white p-4 flex items-center justify-between shadow-md relative overflow-hidden">
+                        <div className="bg-karu-terracotta text-white p-4 flex items-center justify-between shadow-md relative overflow-hidden">
                             {/* Decorative background circle */}
                             <div className="absolute -top-6 -right-6 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
 
@@ -170,12 +170,7 @@ export function ChatWidget() {
                                     <p className="text-xs text-white/80 font-medium">Always here to help</p>
                                 </div>
                             </div>
-                            <button
-                                onClick={() => setIsOpen(false)}
-                                className="p-1 hover:bg-white/10 rounded-full transition-colors text-stone-400 hover:text-white"
-                            >
-                                <X size={18} />
-                            </button>
+
                         </div>
 
                         {/* Messages Area */}

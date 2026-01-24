@@ -12,6 +12,9 @@
   - [x] **Hero Polished**: Unified "কারু", "artistry", and artisan highlights
   - [x] **Chat Widget Aligned**: Toggle button and notification icons matched to logo
 - [x] **Visual Polish & Micro-Interactions (Fresh Updates)**
+  - [x] **Presentation Guide**: Created video guide script at `artifacts/superpowers/presentation_guide.md`
+  - [x] **Chat Widget Cleanup**: Removed redundant close button from header (UI Simplified)
+  - [x] **Chat Widget Header**: Updated to Brand Terracotta (`#C75D3C`) to match logo identity
   - [x] **Hero Background**: Added premium frosted glass effect with global `backdrop-blur-3xl`
   - [x] **Organic Animations**: Added floating orange (`#f78f20`) orbs with custom `organic-orbit` animation
   - [x] **Typography Refinement**: Styled "artistry" with Playfair Display italic serif for elegance
