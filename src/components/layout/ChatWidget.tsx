@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Sparkles } from 'lucide-react';
+import { MessageCircle, X, Send } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAction } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
@@ -155,14 +155,19 @@ export function ChatWidget() {
                         className="mb-4 w-[350px] max-w-[calc(100vw-48px)] bg-white rounded-2xl shadow-xl overflow-hidden border border-[#E88B6A]/20"
                     >
                         {/* Header */}
-                        <div className="bg-[#2D2A26] text-white p-4 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-karu-terracotta/20 rounded-full border border-karu-terracotta/30">
-                                    <Sparkles size={18} className="text-karu-terracotta" />
+                        <div className="bg-gradient-to-r from-karu-terracotta via-karu-coral to-[#E88B6A] text-white p-4 flex items-center justify-between shadow-md relative overflow-hidden">
+                            {/* Decorative background circle */}
+                            <div className="absolute -top-6 -right-6 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+
+                            <div className="flex items-center gap-3 relative z-10">
+                                <div className="w-9 h-9 bg-white rounded-full flex items-center justify-center animate-logo-wiggle shadow-sm">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-karu-terracotta">
+                                        <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c1.5 0 3-.3 4.3-.9C14.8 19 12 16 12 12s2.8-7 6.3-9.1C16.9 2.3 14.6 2 12 2z" fill="currentColor" />
+                                    </svg>
                                 </div>
                                 <div>
-                                    <h3 className="font-display font-semibold text-base tracking-wide">KARU Assistant</h3>
-                                    <p className="text-xs text-stone-400 font-light">Always here to help</p>
+                                    <h3 className="font-display font-bold text-base tracking-wide text-white drop-shadow-sm">KARU Assistant</h3>
+                                    <p className="text-xs text-white/80 font-medium">Always here to help</p>
                                 </div>
                             </div>
                             <button
