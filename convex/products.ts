@@ -8,69 +8,105 @@ export const list = query({
         minPrice: v.optional(v.number()),
         maxPrice: v.optional(v.number()),
         artisanId: v.optional(v.id("artisans")),
+        categories: v.optional(v.array(v.string())),
+        artisanNames: v.optional(v.array(v.string())),
     },
     handler: async (ctx, args) => {
-        let productsQuery;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let products: any[] = [];
 
+        // 1. Resolve Artisan Names to IDs
+        let filterArtisanIds: string[] = [];
         if (args.artisanId) {
-            productsQuery = ctx.db
-                .query("products")
-                .withIndex("by_artisan", (q) => {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    let res: any = q.eq("artisanId", args.artisanId!);
-                    if (args.minPrice !== undefined) {
-                        res = res.gte("price", args.minPrice);
-                    }
-                    if (args.maxPrice !== undefined) {
-                        res = res.lte("price", args.maxPrice);
-                    }
-                    return res;
-                });
+            filterArtisanIds.push(args.artisanId);
+        }
+        if (args.artisanNames && args.artisanNames.length > 0) {
+            const artisans = await Promise.all(
+                args.artisanNames.map(name =>
+                    ctx.db.query("artisans")
+                        .withIndex("by_name", q => q.eq("name", name))
+                        .unique()
+                )
+            );
 
-            if (args.category) {
-                productsQuery = productsQuery.filter((q) =>
-                    q.eq(q.field("category"), args.category)
-                );
+            artisans.forEach(a => {
+                if (a) filterArtisanIds.push(a._id);
+            });
+        }
+        // Remove duplicates
+        filterArtisanIds = [...new Set(filterArtisanIds)];
+
+        // 2. Resolve Categories
+        let filterCategories: string[] = [];
+        if (args.category) {
+            filterCategories.push(args.category);
+        }
+        if (args.categories) {
+            filterCategories.push(...args.categories);
+        }
+        filterCategories = [...new Set(filterCategories)];
+
+        // 3. Fetch Products Strategy
+        if (filterArtisanIds.length > 0) {
+            // Fetch by Artisan
+            const results = await Promise.all(
+                filterArtisanIds.map(id =>
+                    ctx.db.query("products")
+                        .withIndex("by_artisan", q => {
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            let res: any = q.eq("artisanId", id as any);
+                            if (args.minPrice !== undefined) res = res.gte("price", args.minPrice);
+                            if (args.maxPrice !== undefined) res = res.lte("price", args.maxPrice);
+                            return res;
+                        })
+                        .collect()
+                )
+            );
+            products = results.flat();
+
+            // Apply Category Filter in memory
+            if (filterCategories.length > 0) {
+                products = products.filter(p => filterCategories.includes(p.category));
             }
-        } else if (args.category) {
-            productsQuery = ctx.db
-                .query("products")
-                .withIndex("by_category", (q) => {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    let res: any = q.eq("category", args.category!);
-                    if (args.minPrice !== undefined) {
-                        res = res.gte("price", args.minPrice);
-                    }
-                    if (args.maxPrice !== undefined) {
-                        res = res.lte("price", args.maxPrice);
-                    }
-                    return res;
-                });
-        } else if (args.minPrice !== undefined || args.maxPrice !== undefined) {
-            productsQuery = ctx.db
-                .query("products")
-                .withIndex("by_price", (q) => {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    let res: any = q;
-                    if (args.minPrice !== undefined) {
-                        res = res.gte("price", args.minPrice);
-                    }
-                    if (args.maxPrice !== undefined) {
-                        res = res.lte("price", args.maxPrice);
-                    }
-                    return res;
-                });
+
+        } else if (filterCategories.length > 0) {
+            // Fetch by Category
+            const results = await Promise.all(
+                filterCategories.map(cat =>
+                    ctx.db.query("products")
+                        .withIndex("by_category", q => {
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            let res: any = q.eq("category", cat);
+                            if (args.minPrice !== undefined) res = res.gte("price", args.minPrice);
+                            if (args.maxPrice !== undefined) res = res.lte("price", args.maxPrice);
+                            return res;
+                        })
+                        .collect()
+                )
+            );
+            products = results.flat();
+
         } else {
-            productsQuery = ctx.db.query("products");
+            // No specific filters -> Fetch all (filtered by price)
+             const q = ctx.db.query("products");
+             if (args.minPrice !== undefined || args.maxPrice !== undefined) {
+                 products = await q.withIndex("by_price", q => {
+                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                     let res: any = q;
+                     if (args.minPrice !== undefined) res = res.gte("price", args.minPrice);
+                     if (args.maxPrice !== undefined) res = res.lte("price", args.maxPrice);
+                     return res;
+                 }).collect();
+             } else {
+                 products = await q.collect();
+             }
         }
 
-        const products = await productsQuery.collect();
-
         // Enrich with artisan data
-        const artisanIds = [...new Set(products.map((p) => p.artisanId))];
-        const artisans = await Promise.all(artisanIds.map((id) => ctx.db.get(id)));
+        const uniqueArtisanIds = [...new Set(products.map((p) => p.artisanId))];
+        const artisans = await Promise.all(uniqueArtisanIds.map((id) => ctx.db.get(id)));
         const artisansMap = new Map();
-        artisanIds.forEach((id, index) => {
+        uniqueArtisanIds.forEach((id, index) => {
             artisansMap.set(id, artisans[index]);
         });
 

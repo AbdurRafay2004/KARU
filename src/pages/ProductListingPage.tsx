@@ -25,6 +25,8 @@ export function ProductListingPage() {
     const productsList = useQuery(api.products.list, {
         minPrice: priceRange[0],
         maxPrice: priceRange[1],
+        categories: selectedCategories.length > 0 ? selectedCategories : undefined,
+        artisanNames: selectedArtisans.length > 0 ? selectedArtisans : undefined,
     });
 
     const searchResults = useQuery(api.products.search, searchQuery ? { query: searchQuery } : "skip");
@@ -36,15 +38,17 @@ export function ProductListingPage() {
     const filteredProducts = useMemo(() => {
         if (!products) return [];
 
-        let filtered = products.filter(product => {
-            const categoryMatch = selectedCategories.length === 0 || selectedCategories.includes(product.category);
-            const artisanMatch = selectedArtisans.length === 0 ||
-                (product.artisan && selectedArtisans.includes(product.artisan.name));
-            return categoryMatch && artisanMatch;
-        });
+        let filtered = products;
 
-        // Search results don't support price filtering at database level yet, so client-side filter if search is active
         if (searchQuery) {
+            filtered = products.filter(product => {
+                const categoryMatch = selectedCategories.length === 0 || selectedCategories.includes(product.category);
+                const artisanMatch = selectedArtisans.length === 0 ||
+                    (product.artisan && selectedArtisans.includes(product.artisan.name));
+                return categoryMatch && artisanMatch;
+            });
+
+            // Search results don't support price filtering at database level yet, so client-side filter if search is active
             filtered = filtered.filter(p => p.price >= priceRange[0] && p.price <= priceRange[1]);
         }
 

@@ -58,7 +58,8 @@ export default defineSchema({
         userId: v.optional(v.id("users")), // Owner of this artisan shop
     }).index("by_slug", ["slug"])
         .index("by_featured", ["isFeatured"])
-        .index("by_user", ["userId"]),
+        .index("by_user", ["userId"])
+        .index("by_name", ["name"]),
 
     // Categories table
     categories: defineTable({
