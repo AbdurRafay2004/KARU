@@ -1,4 +1,5 @@
 import { X } from 'lucide-react';
+import type { Id } from '../../../convex/_generated/dataModel';
 
 interface FilterSidebarProps {
     selectedCategories: string[];
@@ -7,10 +8,10 @@ interface FilterSidebarProps {
     setPriceRange: (range: [number, number]) => void;
     selectedArtisans: string[];
     setSelectedArtisans: (artisans: string[]) => void;
+    artisans: { _id: Id<"artisans">; name: string }[];
 }
 
 const CATEGORIES = ['Home Decor', 'Jewelry', 'Textiles', 'Pottery', 'Woodwork', 'Bags', 'Mats & Rugs'];
-const ARTISANS = ['Elena Rossi', 'Maria Santos', 'Aisha Khan', 'James Chen', 'Fatima Ahmed'];
 
 export function FilterSidebar({
     selectedCategories,
@@ -19,6 +20,7 @@ export function FilterSidebar({
     setPriceRange,
     selectedArtisans,
     setSelectedArtisans,
+    artisans,
 }: FilterSidebarProps) {
     const toggleCategory = (category: string) => {
         setSelectedCategories(
@@ -28,11 +30,11 @@ export function FilterSidebar({
         );
     };
 
-    const toggleArtisan = (artisan: string) => {
+    const toggleArtisan = (artisanId: string) => {
         setSelectedArtisans(
-            selectedArtisans.includes(artisan)
-                ? selectedArtisans.filter(a => a !== artisan)
-                : [...selectedArtisans, artisan]
+            selectedArtisans.includes(artisanId)
+                ? selectedArtisans.filter(a => a !== artisanId)
+                : [...selectedArtisans, artisanId]
         );
     };
 
@@ -126,19 +128,22 @@ export function FilterSidebar({
             <div className="mb-4">
                 <h3 className="font-medium text-karu-charcoal mb-3">Artisan</h3>
                 <div className="space-y-2">
-                    {ARTISANS.map((artisan) => (
-                        <label key={artisan} className="flex items-center gap-2 cursor-pointer group">
+                    {artisans.map((artisan) => (
+                        <label key={artisan._id} className="flex items-center gap-2 cursor-pointer group">
                             <input
                                 type="checkbox"
-                                checked={selectedArtisans.includes(artisan)}
-                                onChange={() => toggleArtisan(artisan)}
+                                checked={selectedArtisans.includes(artisan._id)}
+                                onChange={() => toggleArtisan(artisan._id)}
                                 className="w-4 h-4 rounded border-karu-sand text-karu-terracotta focus:ring-karu-terracotta"
                             />
                             <span className="text-sm text-karu-stone group-hover:text-karu-charcoal transition-colors">
-                                {artisan}
+                                {artisan.name}
                             </span>
                         </label>
                     ))}
+                    {artisans.length === 0 && (
+                        <p className="text-xs text-karu-stone italic">No artisans found</p>
+                    )}
                 </div>
             </div>
 
@@ -157,16 +162,20 @@ export function FilterSidebar({
                                 <X className="w-3 h-3" />
                             </button>
                         ))}
-                        {selectedArtisans.map((artisan) => (
-                            <button
-                                key={artisan}
-                                onClick={() => toggleArtisan(artisan)}
-                                className="flex items-center gap-1 px-2 py-1 bg-karu-sand rounded-full text-xs hover:bg-karu-terracotta hover:text-white transition-colors"
-                            >
-                                <span>{artisan}</span>
-                                <X className="w-3 h-3" />
-                            </button>
-                        ))}
+                        {selectedArtisans.map((artisanId) => {
+                            const artisan = artisans.find(a => a._id === artisanId);
+                            if (!artisan) return null;
+                            return (
+                                <button
+                                    key={artisanId}
+                                    onClick={() => toggleArtisan(artisanId)}
+                                    className="flex items-center gap-1 px-2 py-1 bg-karu-sand rounded-full text-xs hover:bg-karu-terracotta hover:text-white transition-colors"
+                                >
+                                    <span>{artisan.name}</span>
+                                    <X className="w-3 h-3" />
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>
             )}

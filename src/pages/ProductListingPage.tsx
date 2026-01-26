@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useQuery } from 'convex/react';
 import { useSearchParams } from 'react-router-dom';
 import { api } from '../../convex/_generated/api';
+import type { Id } from '../../convex/_generated/dataModel';
 import { ProductCard } from '../components/product/ProductCard';
 import { ProductCardSkeleton } from '../components/product/ProductCardSkeleton';
 import { FilterSidebar } from '../components/product/FilterSidebar.tsx';
@@ -21,10 +22,16 @@ export function ProductListingPage() {
     const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
     const [selectedArtisans, setSelectedArtisans] = useState<string[]>([]);
 
+    // Fetch artisans for filter
+    const artisans = useQuery(api.artisans.list) || [];
+
     // Determine which query to run
+    // For listing, we push filtering to backend
     const productsList = useQuery(api.products.list, {
         minPrice: priceRange[0],
         maxPrice: priceRange[1],
+        categories: selectedCategories,
+        artisanIds: selectedArtisans.length > 0 ? selectedArtisans as Id<"artisans">[] : undefined,
     });
 
     const searchResults = useQuery(api.products.search, searchQuery ? { query: searchQuery } : "skip");
@@ -36,15 +43,16 @@ export function ProductListingPage() {
     const filteredProducts = useMemo(() => {
         if (!products) return [];
 
-        let filtered = products.filter(product => {
-            const categoryMatch = selectedCategories.length === 0 || selectedCategories.includes(product.category);
-            const artisanMatch = selectedArtisans.length === 0 ||
-                (product.artisan && selectedArtisans.includes(product.artisan.name));
-            return categoryMatch && artisanMatch;
-        });
+        let filtered = products;
 
-        // Search results don't support price filtering at database level yet, so client-side filter if search is active
+        // Search results don't support price/category/artisan filtering at database level yet,
+        // so client-side filter if search is active
         if (searchQuery) {
+            filtered = filtered.filter(product => {
+                const categoryMatch = selectedCategories.length === 0 || selectedCategories.includes(product.category);
+                const artisanMatch = selectedArtisans.length === 0 || selectedArtisans.includes(product.artisanId);
+                return categoryMatch && artisanMatch;
+            });
             filtered = filtered.filter(p => p.price >= priceRange[0] && p.price <= priceRange[1]);
         }
 
@@ -146,6 +154,7 @@ export function ProductListingPage() {
                                 setPriceRange={setPriceRange}
                                 selectedArtisans={selectedArtisans}
                                 setSelectedArtisans={setSelectedArtisans}
+                                artisans={artisans}
                             />
                         </aside>
                     )}
