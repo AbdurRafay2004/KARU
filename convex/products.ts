@@ -1,6 +1,18 @@
 import { query } from "./_generated/server";
 import { v } from "convex/values";
 
+// Helper to apply price filters
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function applyPriceFilter(q: any, args: { minPrice?: number; maxPrice?: number }) {
+    if (args.minPrice !== undefined) {
+        q = q.gte("price", args.minPrice);
+    }
+    if (args.maxPrice !== undefined) {
+        q = q.lte("price", args.maxPrice);
+    }
+    return q;
+}
+
 // Get all products with optional filters
 export const list = query({
     args: {
@@ -12,53 +24,37 @@ export const list = query({
     handler: async (ctx, args) => {
         let productsQuery;
 
-        if (args.artisanId) {
+        if (args.artisanId && args.category) {
+            productsQuery = ctx.db
+                .query("products")
+                .withIndex("by_artisan_category", (q) => {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const res: any = q.eq("artisanId", args.artisanId!).eq("category", args.category!);
+                    return applyPriceFilter(res, args);
+                });
+        } else if (args.artisanId) {
             productsQuery = ctx.db
                 .query("products")
                 .withIndex("by_artisan", (q) => {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    let res: any = q.eq("artisanId", args.artisanId!);
-                    if (args.minPrice !== undefined) {
-                        res = res.gte("price", args.minPrice);
-                    }
-                    if (args.maxPrice !== undefined) {
-                        res = res.lte("price", args.maxPrice);
-                    }
-                    return res;
+                    const res: any = q.eq("artisanId", args.artisanId!);
+                    return applyPriceFilter(res, args);
                 });
-
-            if (args.category) {
-                productsQuery = productsQuery.filter((q) =>
-                    q.eq(q.field("category"), args.category)
-                );
-            }
         } else if (args.category) {
             productsQuery = ctx.db
                 .query("products")
                 .withIndex("by_category", (q) => {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    let res: any = q.eq("category", args.category!);
-                    if (args.minPrice !== undefined) {
-                        res = res.gte("price", args.minPrice);
-                    }
-                    if (args.maxPrice !== undefined) {
-                        res = res.lte("price", args.maxPrice);
-                    }
-                    return res;
+                    const res: any = q.eq("category", args.category!);
+                    return applyPriceFilter(res, args);
                 });
         } else if (args.minPrice !== undefined || args.maxPrice !== undefined) {
             productsQuery = ctx.db
                 .query("products")
                 .withIndex("by_price", (q) => {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    let res: any = q;
-                    if (args.minPrice !== undefined) {
-                        res = res.gte("price", args.minPrice);
-                    }
-                    if (args.maxPrice !== undefined) {
-                        res = res.lte("price", args.maxPrice);
-                    }
-                    return res;
+                    const res: any = q;
+                    return applyPriceFilter(res, args);
                 });
         } else {
             productsQuery = ctx.db.query("products");
