@@ -43,7 +43,7 @@ export const chat = action({
             // Fetch products if relevant
             if (intent.wantsProducts) {
                 const products = await ctx.runQuery(api.products.list, {
-                    category: intent.category,
+                    categories: intent.category ? [intent.category] : undefined,
                     maxPrice: intent.maxPrice,
                 });
 
