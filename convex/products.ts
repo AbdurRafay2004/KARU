@@ -1,5 +1,25 @@
 import { query } from "./_generated/server";
+import type { QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
+import type { Doc } from "./_generated/dataModel";
+
+// Helper to enrich products with artisan data
+async function enrichProducts(ctx: QueryCtx, products: Doc<"products">[]) {
+    const artisanIds = [...new Set(products.map((p) => p.artisanId))];
+    const artisans = await Promise.all(artisanIds.map((id) => ctx.db.get(id)));
+    const artisansMap = new Map();
+    artisanIds.forEach((id, index) => {
+        artisansMap.set(id, artisans[index]);
+    });
+
+    return products.map((product) => {
+        const artisan = artisansMap.get(product.artisanId);
+        return {
+            ...product,
+            artisan: artisan ? { name: artisan.name, slug: artisan.slug } : null,
+        };
+    });
+}
 
 // Get all products with optional filters
 export const list = query({
@@ -65,24 +85,7 @@ export const list = query({
         }
 
         const products = await productsQuery.collect();
-
-        // Enrich with artisan data
-        const artisanIds = [...new Set(products.map((p) => p.artisanId))];
-        const artisans = await Promise.all(artisanIds.map((id) => ctx.db.get(id)));
-        const artisansMap = new Map();
-        artisanIds.forEach((id, index) => {
-            artisansMap.set(id, artisans[index]);
-        });
-
-        const enrichedProducts = products.map((product) => {
-            const artisan = artisansMap.get(product.artisanId);
-            return {
-                ...product,
-                artisan: artisan ? { name: artisan.name, slug: artisan.slug } : null,
-            };
-        });
-
-        return enrichedProducts;
+        return await enrichProducts(ctx, products);
     },
 });
 
@@ -123,23 +126,7 @@ export const trending = query({
             .withIndex("by_trending", (q) => q.eq("isTrending", true))
             .collect();
 
-        // Enrich with artisan data
-        const artisanIds = [...new Set(products.map((p) => p.artisanId))];
-        const artisans = await Promise.all(artisanIds.map((id) => ctx.db.get(id)));
-        const artisansMap = new Map();
-        artisanIds.forEach((id, index) => {
-            artisansMap.set(id, artisans[index]);
-        });
-
-        const enrichedProducts = products.map((product) => {
-            const artisan = artisansMap.get(product.artisanId);
-            return {
-                ...product,
-                artisan: artisan ? { name: artisan.name, slug: artisan.slug } : null,
-            };
-        });
-
-        return enrichedProducts;
+        return await enrichProducts(ctx, products);
     },
 });
 
@@ -152,22 +139,6 @@ export const search = query({
             .withSearchIndex("search_body", (q) => q.search("name", args.query))
             .take(20);
 
-        // Enrich with artisan data
-        const artisanIds = [...new Set(products.map((p) => p.artisanId))];
-        const artisans = await Promise.all(artisanIds.map((id) => ctx.db.get(id)));
-        const artisansMap = new Map();
-        artisanIds.forEach((id, index) => {
-            artisansMap.set(id, artisans[index]);
-        });
-
-        const enrichedProducts = products.map((product) => {
-            const artisan = artisansMap.get(product.artisanId);
-            return {
-                ...product,
-                artisan: artisan ? { name: artisan.name, slug: artisan.slug } : null,
-            };
-        });
-
-        return enrichedProducts;
+        return await enrichProducts(ctx, products);
     },
 });

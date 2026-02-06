@@ -40,15 +40,20 @@ export const getCart = query({
         if (!cart) return { items: [] };
 
         // Enrich with product details
-        const enrichedItems = await Promise.all(
-            cart.items.map(async (item) => {
-                const product = await ctx.db.get(item.productId);
-                return {
-                    ...item,
-                    product,
-                };
-            })
-        );
+        const productIds = [...new Set(cart.items.map((item) => item.productId))];
+        const products = await Promise.all(productIds.map((id) => ctx.db.get(id)));
+        const productsMap = new Map();
+        productIds.forEach((id, index) => {
+            productsMap.set(id, products[index]);
+        });
+
+        const enrichedItems = cart.items.map((item) => {
+            const product = productsMap.get(item.productId);
+            return {
+                ...item,
+                product: product ?? null,
+            };
+        });
 
         return { ...cart, items: enrichedItems };
     },
