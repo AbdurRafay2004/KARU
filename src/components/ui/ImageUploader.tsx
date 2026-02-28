@@ -1,6 +1,55 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { UploadCloud, X, Link as LinkIcon, Image as ImageIcon } from 'lucide-react';
 
+// Compresses an image File using the Canvas API.
+// Returns a new File with the same name, scaled to at most maxDimension px,
+// re-encoded as JPEG at the given quality (0-1).
+async function compressImage(
+    file: File,
+    maxDimension = 1600,
+    quality = 0.85,
+): Promise<File> {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        const objectUrl = URL.createObjectURL(file);
+        img.onload = () => {
+            URL.revokeObjectURL(objectUrl);
+            let { width, height } = img;
+
+            // Only scale down, never up
+            if (width > maxDimension || height > maxDimension) {
+                if (width >= height) {
+                    height = Math.round((height / width) * maxDimension);
+                    width = maxDimension;
+                } else {
+                    width = Math.round((width / height) * maxDimension);
+                    height = maxDimension;
+                }
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) { resolve(file); return; }
+            ctx.drawImage(img, 0, 0, width, height);
+
+            canvas.toBlob(
+                (blob) => {
+                    if (!blob) { resolve(file); return; }
+                    // Keep original filename; force .jpg extension for JPEG output
+                    const name = file.name.replace(/\.[^.]+$/, '.jpg');
+                    resolve(new File([blob], name, { type: 'image/jpeg', lastModified: Date.now() }));
+                },
+                'image/jpeg',
+                quality,
+            );
+        };
+        img.onerror = () => { URL.revokeObjectURL(objectUrl); reject(new Error('Failed to load image for compression')); };
+        img.src = objectUrl;
+    });
+}
+
 interface ImageUploaderProps {
     existingUrls: string[];
     onExistingUrlsChange: (urls: string[]) => void;
@@ -16,7 +65,7 @@ export function ImageUploader({
     pendingFiles,
     onPendingFilesChange,
     maxFiles = 5,
-    maxSizeMB = 5,
+    maxSizeMB = 10,
 }: ImageUploaderProps) {
     const [isDragging, setIsDragging] = useState(false);
     const [urlInput, setUrlInput] = useState('');
@@ -49,7 +98,7 @@ export function ImageUploader({
         setIsDragging(false);
     }, []);
 
-    const processFiles = useCallback((files: FileList | File[]) => {
+    const processFiles = useCallback(async (files: FileList | File[]) => {
         const validFiles: File[] = [];
         let skippedSize = 0;
         let skippedType = 0;
@@ -76,7 +125,9 @@ export function ImageUploader({
         }
 
         if (validFiles.length > 0) {
-            onPendingFilesChange([...pendingFiles, ...validFiles]);
+            // Compress each file on the client before queueing for upload
+            const compressed = await Promise.all(validFiles.map((f) => compressImage(f)));
+            onPendingFilesChange([...pendingFiles, ...compressed]);
         }
     }, [pendingFiles, totalImages, maxFiles, maxSizeMB, onPendingFilesChange]);
 
@@ -97,23 +148,36 @@ export function ImageUploader({
         if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
-    const handlePaste = useCallback((e: React.ClipboardEvent) => {
-        if (totalImages >= maxFiles) return;
+    // Global paste listener so Ctrl+V works without needing to focus the dropzone
+    useEffect(() => {
+        const handleGlobalPaste = (e: ClipboardEvent) => {
+            if (totalImages >= maxFiles) return;
 
-        const items = e.clipboardData.items;
-        const pastedFiles: File[] = [];
-
-        for (let i = 0; i < items.length; i++) {
-            if (items[i].type.indexOf('image') !== -1) {
-                const file = items[i].getAsFile();
-                if (file) pastedFiles.push(file);
+            // Don't steal paste events from text inputs / textareas
+            const target = e.target as HTMLElement;
+            if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+                return;
             }
-        }
 
-        if (pastedFiles.length > 0) {
-            e.preventDefault(); // Prevent pasting into other inputs if focused on dropzone
-            processFiles(pastedFiles);
-        }
+            const items = e.clipboardData?.items;
+            if (!items) return;
+
+            const pastedFiles: File[] = [];
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.startsWith('image/')) {
+                    const file = items[i].getAsFile();
+                    if (file) pastedFiles.push(file);
+                }
+            }
+
+            if (pastedFiles.length > 0) {
+                e.preventDefault();
+                void processFiles(pastedFiles);
+            }
+        };
+
+        document.addEventListener('paste', handleGlobalPaste);
+        return () => document.removeEventListener('paste', handleGlobalPaste);
     }, [processFiles, totalImages, maxFiles]);
 
     const handleAddUrl = () => {
@@ -150,7 +214,7 @@ export function ImageUploader({
                     Product Images ({totalImages}/{maxFiles})
                 </span>
                 <span className="text-karu-stone">
-                    Max size: {maxSizeMB}MB
+                    Max {maxSizeMB}MB · auto-compressed
                 </span>
             </div>
 
@@ -167,7 +231,6 @@ export function ImageUploader({
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                onPaste={handlePaste}
                 tabIndex={0}
                 onClick={() => fileInputRef.current?.click()}
             >
@@ -188,7 +251,7 @@ export function ImageUploader({
                         Click to upload or drag and drop
                     </p>
                     <p className="text-karu-stone text-sm">
-                        You can also press <kbd className="px-1 py-0.5 bg-white border border-karu-sand rounded text-xs">Ctrl+V</kbd> to paste
+                        Press <kbd className="px-1 py-0.5 bg-white border border-karu-sand rounded text-xs">Ctrl+V</kbd> anywhere to paste
                     </p>
                 </div>
             </div>
@@ -272,7 +335,10 @@ export function ImageUploader({
                                     <X className="w-4 h-4" />
                                 </button>
                                 <div className="absolute bottom-0 inset-x-0 bg-karu-terracotta/90 text-white text-[10px] px-2 py-1 truncate">
-                                    {(file.size / 1024 / 1024).toFixed(1)}MB • Pending
+                                    {file.size < 1024 * 1024
+                                        ? `${Math.round(file.size / 1024)}KB`
+                                        : `${(file.size / 1024 / 1024).toFixed(1)}MB`
+                                    } · Ready
                                 </div>
                             </div>
                         );

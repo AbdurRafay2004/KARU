@@ -663,7 +663,7 @@ function ProductModal({
                             pendingFiles={pendingFiles}
                             onPendingFilesChange={setPendingFiles}
                             maxFiles={5}
-                            maxSizeMB={5}
+                            maxSizeMB={10}
                         />
                     </div>
 

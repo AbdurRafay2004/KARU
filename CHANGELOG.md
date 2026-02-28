@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 ### Current Status
 ✅ Product Image Upload Feature Implemented & Integrated.
 ✅ Marketplace navigation button added to Header.
+✅ Client-side image compression added to ImageUploader.
+✅ Global Ctrl+V paste implemented.
+✅ Image size cap increased to 10MB.
 
 ### added
 - Created `ImageUploader` component with drag-and-drop, clipboard paste, and URL support.
@@ -15,6 +18,7 @@ All notable changes to this project will be documented in this file.
 - Updated all product queries to resolve storage IDs to public URLs using a `resolveImages` helper.
 - Added automatic cleanup of orphaned storage files when products are deleted.
 - Added "Marketplace" navigation button to the header for quick access to product listings.
+- Added `compressImage` utility in `ImageUploader.tsx`: auto-compresses files (max 1600px, JPEG quality 0.85) via Canvas API before uploading to Convex Storage.
 
 ### Immediate Next Steps
 - [ ] Verify image upload works after `npx convex dev` syncs the new mutations.

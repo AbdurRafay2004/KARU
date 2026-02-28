@@ -99,7 +99,7 @@ export const HeroSection = () => {
                             <div className="space-y-4 pt-12">
                                 <div className="rounded-3xl overflow-hidden aspect-square shadow-lg hover:shadow-2xl transition-shadow duration-500">
                                     <img
-                                        src="https://scontent.fdac142-1.fna.fbcdn.net/v/t39.30808-6/594453355_122107478325135589_2553278613010234397_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=127cfc&_nc_ohc=JRf5iC7KoiwQ7kNvwFPz5Yo&_nc_oc=AdntbrxLXibHQLKBJlRBBPxbasWKbA8QfsxK-fdyq1hg3XTxno8Xx9YaTGNM1nlx87w&_nc_zt=23&_nc_ht=scontent.fdac142-1.fna&_nc_gid=bhRJD5in20SJWczCAkCeIg&oh=00_Afqb4XZ3YKogdAX_llRHgcQeV7GjAYYhm0c8jNGiR_1y2A&oe=6979EA18"
+                                        src="https://fortunate-cuttlefish-628.convex.cloud/api/storage/aeb9f000-40ff-4cb4-859b-f4b0e6c814e5"
                                         alt="Handmade jewelry"
                                         className="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 hover:scale-105 transition-all duration-700"
                                     />
