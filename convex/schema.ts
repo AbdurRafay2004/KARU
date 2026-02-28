@@ -55,6 +55,7 @@ export default defineSchema({
             twitter: v.optional(v.string()),
         }),
         isFeatured: v.optional(v.boolean()),
+        rank: v.optional(v.number()), // Manual sort order (lower = higher priority)
         userId: v.optional(v.id("users")), // Owner of this artisan shop
     }).index("by_slug", ["slug"])
         .index("by_featured", ["isFeatured"])

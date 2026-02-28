@@ -1,4 +1,4 @@
-import { Id } from "./_generated/dataModel";
+import type { Id } from "./_generated/dataModel";
 
 /**
  * Helper to resolve image storage IDs to URLs.

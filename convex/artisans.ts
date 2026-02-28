@@ -5,7 +5,14 @@ import { v } from "convex/values";
 export const list = query({
     args: {},
     handler: async (ctx) => {
-        return await ctx.db.query("artisans").collect();
+        const artisans = await ctx.db.query("artisans").collect();
+
+        // Custom sort: lower numbers first, unranked at the end
+        return artisans.sort((a, b) => {
+            const rankA = a.rank ?? Infinity;
+            const rankB = b.rank ?? Infinity;
+            return rankA - rankB;
+        });
     },
 });
 
