@@ -6,6 +6,10 @@
 
 
 ### Implementation Log
+- [x] **Product Image Upload (Convex Storage)**
+  - [x] Integrated Convex File Storage for secure product images
+  - [x] Created `ImageUploader` component with Drag & Drop and Clipboard support
+  - [x] Automated storage cleanup on product deletion
 - [x] **Brand Color Unification (Latest)**
   - [x] **Unified Accents**: Refined saffron and amber to match terracotta logo (#C75D3C)
   - [x] **Harmonized Gradients**: Updated sunset and text gradients to use brand terracotta
@@ -219,6 +223,7 @@ For production (Vercel), ensure the following are set:
 - **Icons**: Lucide React
 - **Routing**: React Router DOM
 - **Backend**: Convex (real-time database)
+- **Storage**: Convex File Storage
 - **Auth**: @convex-dev/auth
 - **AI**: Google Gemini API (@google/genai) with 5-model fallback chain
 
@@ -228,7 +233,8 @@ src/
 ├── components/
 │   ├── layout/         # Header, Footer, Layout, UserMenu
 │   ├── home/           # Homepage sections
-│   └── product/        # ProductCard, FilterSidebar, Gallery, Info
+│   ├── product/        # ProductCard, FilterSidebar, Gallery, Info
+│   └── ui/             # ImageUploader, buttons, etc.
 ├── pages/              # Home, Products, ProductDetail, Artisan, Login, Signup, Cart, Checkout, Orders, Admin, Sell, Onboarding
 └── router.tsx          # Route definitions
 convex/

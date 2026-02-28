@@ -16,6 +16,7 @@ import {
     Store,
 } from 'lucide-react';
 import type { Id } from '../../convex/_generated/dataModel';
+import { ImageUploader } from '../components/ui/ImageUploader';
 
 type Tab = 'overview' | 'products' | 'orders';
 
@@ -453,15 +454,21 @@ function ProductModal({
     );
     const addProduct = useMutation(api.admin.addProduct);
     const updateProduct = useMutation(api.admin.updateProduct);
+    const generateUploadUrl = useMutation(api.admin.generateUploadUrl);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    // Image uploader state
+    const [existingImages, setExistingImages] = useState<string[]>([]);
+    const [pendingFiles, setPendingFiles] = useState<File[]>([]);
+
     const [formData, setFormData] = useState({
         name: '',
         description: '',
         price: '',
         category: 'pottery',
         stock: '',
-        images: '',
     });
 
     // Populate form with existing data
@@ -473,23 +480,70 @@ function ProductModal({
                 price: existingProduct.price.toString(),
                 category: existingProduct.category,
                 stock: existingProduct.stock.toString(),
-                images: existingProduct.images.join('\n'),
             });
+            setExistingImages(existingProduct.images || []);
+            setPendingFiles([]);
+        } else {
+            setFormData({
+                name: '',
+                description: '',
+                price: '',
+                category: 'pottery',
+                stock: '',
+            });
+            setExistingImages([]);
+            setPendingFiles([]);
         }
-    }, [existingProduct]);
+        setError(null);
+    }, [existingProduct, productId]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError(null);
+
+        // Validation
+        if (existingImages.length === 0 && pendingFiles.length === 0) {
+            setError("Please add at least one product image.");
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
+            // 1. Upload pending files to Convex Storage
+            const uploadedStorageIds: string[] = [];
+
+            for (const file of pendingFiles) {
+                // Get upload URL from Convex
+                const uploadUrl = await generateUploadUrl();
+
+                // POST the file to the URL
+                const response = await fetch(uploadUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': file.type },
+                    body: file,
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to upload ${file.name}`);
+                }
+
+                // Extract the storage ID from the response
+                const { storageId } = await response.json();
+                uploadedStorageIds.push(storageId);
+            }
+
+            // 2. Combine existing URLs with newly uploaded storage IDs
+            const allImages = [...existingImages, ...uploadedStorageIds];
+
+            // 3. Save the product
             const productData = {
                 name: formData.name,
                 description: formData.description,
                 price: parseFloat(formData.price),
                 category: formData.category,
                 stock: parseInt(formData.stock),
-                images: formData.images.split('\n').filter((url) => url.trim()),
+                images: allImages,
             };
 
             if (productId) {
@@ -498,14 +552,13 @@ function ProductModal({
                     ...productData,
                 });
             } else {
-                // addProduct no longer needs artisanId - derived from auth
                 await addProduct(productData);
             }
 
             onClose();
-        } catch (error) {
-            console.error('Failed to save product:', error);
-            alert('Failed to save product. Please try again.');
+        } catch (err: any) {
+            console.error('Failed to save product:', err);
+            setError(err.message || 'Failed to save product. Please try again.');
         } finally {
             setIsSubmitting(false);
         }
@@ -601,18 +654,25 @@ function ProductModal({
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-karu-charcoal mb-1">
-                            Image URLs (one per line)
+                        <label className="block text-sm font-medium text-karu-charcoal mb-3">
+                            Product Images
                         </label>
-                        <textarea
-                            required
-                            rows={3}
-                            value={formData.images}
-                            onChange={(e) => setFormData({ ...formData, images: e.target.value })}
-                            placeholder="https://example.com/image1.jpg"
-                            className="w-full px-4 py-2 border border-karu-sand rounded-karu focus:outline-none focus:ring-2 focus:ring-karu-terracotta/20 font-mono text-sm"
+                        <ImageUploader
+                            existingUrls={existingImages}
+                            onExistingUrlsChange={setExistingImages}
+                            pendingFiles={pendingFiles}
+                            onPendingFilesChange={setPendingFiles}
+                            maxFiles={5}
+                            maxSizeMB={5}
                         />
                     </div>
+
+                    {error && (
+                        <div className="p-3 bg-red-50 text-red-600 rounded-karu text-sm flex items-start gap-2">
+                            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+                            <p>{error}</p>
+                        </div>
+                    )}
 
                     <div className="flex gap-3 pt-4">
                         <button

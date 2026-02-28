@@ -1,5 +1,6 @@
 import { query } from "./_generated/server";
 import { v } from "convex/values";
+import { resolveImages } from "./storage";
 
 // Get all products with optional filters
 export const list = query({
@@ -74,13 +75,15 @@ export const list = query({
             artisansMap.set(id, artisans[index]);
         });
 
-        const enrichedProducts = products.map((product) => {
+        const enrichedProducts = await Promise.all(products.map(async (product) => {
             const artisan = artisansMap.get(product.artisanId);
+            const resolvedImages = await resolveImages(ctx, product.images);
             return {
                 ...product,
+                images: resolvedImages,
                 artisan: artisan ? { name: artisan.name, slug: artisan.slug } : null,
             };
-        });
+        }));
 
         return enrichedProducts;
     },
@@ -94,8 +97,11 @@ export const get = query({
         if (!product) return null;
 
         const artisan = await ctx.db.get(product.artisanId);
+        const resolvedImages = await resolveImages(ctx, product.images);
+
         return {
             ...product,
+            images: resolvedImages,
             artisan,
         };
     },
@@ -110,7 +116,14 @@ export const byArtisan = query({
             .withIndex("by_artisan", (q) => q.eq("artisanId", args.artisanId))
             .collect();
 
-        return products;
+        const resolvedProducts = await Promise.all(
+            products.map(async (p) => ({
+                ...p,
+                images: await resolveImages(ctx, p.images),
+            }))
+        );
+
+        return resolvedProducts;
     },
 });
 
@@ -131,13 +144,15 @@ export const trending = query({
             artisansMap.set(id, artisans[index]);
         });
 
-        const enrichedProducts = products.map((product) => {
+        const enrichedProducts = await Promise.all(products.map(async (product) => {
             const artisan = artisansMap.get(product.artisanId);
+            const resolvedImages = await resolveImages(ctx, product.images);
             return {
                 ...product,
+                images: resolvedImages,
                 artisan: artisan ? { name: artisan.name, slug: artisan.slug } : null,
             };
-        });
+        }));
 
         return enrichedProducts;
     },
@@ -160,13 +175,15 @@ export const search = query({
             artisansMap.set(id, artisans[index]);
         });
 
-        const enrichedProducts = products.map((product) => {
+        const enrichedProducts = await Promise.all(products.map(async (product) => {
             const artisan = artisansMap.get(product.artisanId);
+            const resolvedImages = await resolveImages(ctx, product.images);
             return {
                 ...product,
+                images: resolvedImages,
                 artisan: artisan ? { name: artisan.name, slug: artisan.slug } : null,
             };
-        });
+        }));
 
         return enrichedProducts;
     },

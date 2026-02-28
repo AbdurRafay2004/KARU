@@ -2,6 +2,7 @@ import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { auth } from "./auth";
 import type { Id } from "./_generated/dataModel";
+import { resolveImages } from "./storage";
 
 /**
  * Helper: Get current user's artisan profile
@@ -111,10 +112,19 @@ export const getMyProducts = query({
 
         const artisanId = profile.artisanId;
 
-        return await ctx.db
+        const products = await ctx.db
             .query("products")
             .withIndex("by_artisan", (q) => q.eq("artisanId", artisanId))
             .collect();
+
+        const resolvedProducts = await Promise.all(
+            products.map(async (p) => ({
+                ...p,
+                images: await resolveImages(ctx, p.images),
+            }))
+        );
+
+        return resolvedProducts;
     },
 });
 
@@ -145,6 +155,28 @@ export const getMyOrders = query({
         // Get all orders
         const allOrders = await ctx.db.query("orders").order("desc").collect();
 
+        // Filter relevant order items to their respective products
+        // Collect all distinct product IDs present in orders
+        const relevantProductIds = new Set<string>();
+        allOrders.forEach(order => {
+            order.items.forEach(item => {
+                if (productIds.has(item.productId)) {
+                    relevantProductIds.add(item.productId);
+                }
+            });
+        });
+
+        // Batch fetch all required products
+        const productsMap = new Map();
+        for (const pid of relevantProductIds) {
+            const prod = await ctx.db.get(pid as Id<"products">);
+            if (prod) {
+                // Pre-resolve their images
+                const resolvedImages = await resolveImages(ctx, prod.images);
+                productsMap.set(pid, { ...prod, resolvedImages });
+            }
+        }
+
         // Filter and enrich orders with customer information
         const enrichedOrders = await Promise.all(
             allOrders
@@ -158,16 +190,31 @@ export const getMyOrders = query({
                     return {
                         ...order,
                         customerName: order.shippingAddress?.name || customer?.name || "Unknown Customer",
-                        // Only include items from this artisan
-                        relevantItems: order.items.filter((item) =>
-                            productIds.has(item.productId)
-                        ),
+                        // Only include items from this artisan, and attach pre-fetched images
+                        relevantItems: order.items
+                            .filter((item) => productIds.has(item.productId))
+                            .map((item) => {
+                                const prod = productsMap.get(item.productId);
+                                return {
+                                    ...item,
+                                    productImage: prod?.resolvedImages?.[0]
+                                };
+                            })
                     };
                 })
         );
 
         return enrichedOrders;
     },
+});
+
+// Generate an upload URL for images
+export const generateUploadUrl = mutation(async (ctx) => {
+    // Verify the user is an artisan
+    await getMyArtisanId(ctx);
+
+    // Return a short-lived upload URL
+    return await ctx.storage.generateUploadUrl();
 });
 
 // Add new product - artisanId derived from auth
@@ -186,6 +233,8 @@ export const addProduct = mutation({
     handler: async (ctx, args) => {
         const artisanId = await getMyArtisanId(ctx);
 
+        // DO NOT resolve images to URLs here. Save the storageId so it can be reused.
+        // Queries will call resolveImages.
         return await ctx.db.insert("products", {
             ...args,
             artisanId,
@@ -214,6 +263,9 @@ export const updateProduct = mutation({
         await verifyProductOwnership(ctx, args.productId);
 
         const { productId, ...updates } = args;
+
+        // DO NOT resolve images to URLs here. Keep storage IDs intact.
+
         // Filter out undefined values
         const filteredUpdates = Object.fromEntries(
             Object.entries(updates).filter(([, v]) => v !== undefined)
@@ -229,6 +281,16 @@ export const deleteProduct = mutation({
     handler: async (ctx, args) => {
         // Verify user owns this product
         await verifyProductOwnership(ctx, args.productId);
+
+        const product = await ctx.db.get(args.productId);
+        if (product) {
+            // Delete associated images in storage to prevent orphans
+            for (const image of product.images) {
+                if (!image.startsWith("http")) {
+                    await ctx.storage.delete(image as Id<"_storage">);
+                }
+            }
+        }
 
         await ctx.db.delete(args.productId);
     },
@@ -302,10 +364,19 @@ export const getArtisanProducts = query({
         const userId = await auth.getUserId(ctx);
         if (!userId) return null;
 
-        return await ctx.db
+        const products = await ctx.db
             .query("products")
             .withIndex("by_artisan", (q) => q.eq("artisanId", args.artisanId))
             .collect();
+
+        const resolvedProducts = await Promise.all(
+            products.map(async (p) => ({
+                ...p,
+                images: await resolveImages(ctx, p.images),
+            }))
+        );
+
+        return resolvedProducts;
     },
 });
 

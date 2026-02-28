@@ -84,8 +84,8 @@ export function Header() {
                     </Link>
 
                     {/* Search Bar */}
-                    <div className="hidden md:flex flex-1 max-w-md mx-8">
-                        <form onSubmit={handleSearch} className="relative w-full">
+                    <div className="hidden md:flex flex-1 max-w-md mx-8 items-center gap-4">
+                        <form onSubmit={handleSearch} className="relative flex-1">
                             <input
                                 type="text"
                                 value={searchQuery}
@@ -97,6 +97,12 @@ export function Header() {
                                 <Search className="w-4 h-4 text-karu-stone hover:text-karu-terracotta transition-colors" />
                             </button>
                         </form>
+                        <Link
+                            to="/products"
+                            className="text-sm font-medium text-karu-charcoal hover:text-karu-terracotta transition-colors whitespace-nowrap"
+                        >
+                            Marketplace
+                        </Link>
                     </div>
 
                     {/* Right Actions */}
